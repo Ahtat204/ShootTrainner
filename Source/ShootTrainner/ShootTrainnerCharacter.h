@@ -13,7 +13,7 @@ UCLASS(config=Game)
 class AShootTrainnerCharacter : public ACharacter
 {
 	GENERATED_BODY()
-     //despite this is ACharacter-based class , which comes with a SkeletonMeshComponent, this was created to make this character FirstPerson
+	//despite this is ACharacter-based class , which comes with a SkeletonMeshComponent, this was created to make this character FirstPerson
 	USkeletalMeshComponent* SkeletalMeshComponent;
 
 	/** Camera boom positioning the camera behind the character */
@@ -32,6 +32,8 @@ class AShootTrainnerCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* JumpAction;
 
+	
+
 	/** Move Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* MoveAction;
@@ -42,9 +44,13 @@ class AShootTrainnerCharacter : public ACharacter
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* Interact;
+
 public:
 	//the class constructor 
 	AShootTrainnerCharacter();
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = pickup, meta = (AllowPrivateAccess = "true"))
+	class AWeapon* pickuppistol;
 
 protected:
 	/** Called for movement input */
@@ -58,17 +64,18 @@ protected:
 
 	// To add mapping context
 	virtual void BeginPlay() override;
+
 public:
-	void PickUpItem(AActor* Pistol);
-	static void AttachPistol(AWeapon* pistol);
+	void PickUpItem(const FInputActionValue& Value);
+	void AttachPistol(AWeapon* pistol);
 	/** Returns CameraBoom subobject **/
-	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
+	FORCEINLINE USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
-	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+	FORCEINLINE UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 };
 
 //Enum class representing the Player-weapon State 
-UENUM(Flags,BlueprintType,Category="Weapons")
+UENUM(Flags, BlueprintType, Category="Weapons")
 enum class EWeaponState : uint8
 {
 	Firing,

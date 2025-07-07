@@ -21,5 +21,9 @@ public:
 	TObjectPtr<USkeletalMeshComponent> SkeletalMeshComponent;
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category="Components")
+	class USphereComponent* PickupSphere;
+
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 };

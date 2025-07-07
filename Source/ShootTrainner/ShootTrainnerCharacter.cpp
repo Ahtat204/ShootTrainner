@@ -11,15 +11,14 @@
 #include "EnhancedInputSubsystems.h"
 
 
-
 AShootTrainnerCharacter::AShootTrainnerCharacter()
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
 
-SkeletalMeshComponent=GetMesh();
-	
+	SkeletalMeshComponent = GetMesh();
+
 	// Don't rotate when the controller rotates. Let that just affect the camera.
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = true;
@@ -71,17 +70,23 @@ void AShootTrainnerCharacter::BeginPlay()
 	}
 }
 
-void AShootTrainnerCharacter::PickUpItem(AActor* Pistol)
+void AShootTrainnerCharacter::PickUpItem(const FInputActionValue& Value)
 {
-	if (Pistol)
+	auto isArmed=Value.Get<bool>();
+	if (isArmed && GEngine)
 	{
-		Pistol->AttachToActor(this,FAttachmentTransformRules::KeepRelativeTransform,TEXT("hand_r"));
+		GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Red,"Pick up item");
+		AttachPistol(pickuppistol);
 		
 	}
 }
 
 void AShootTrainnerCharacter::AttachPistol(AWeapon* pistol)
 {
+	if (pistol)
+	{
+		pistol->AttachToComponent( this->SkeletalMeshComponent,FAttachmentTransformRules::KeepRelativeTransform,TEXT("Weapon"));
+	}
 }
 
 
@@ -99,6 +104,9 @@ void AShootTrainnerCharacter::SetupPlayerInputComponent(class UInputComponent* P
 
 		//Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AShootTrainnerCharacter::Look);
+
+		//interacting
+		EnhancedInputComponent->BindAction(Interact,ETriggerEvent::Triggered,this,&AShootTrainnerCharacter::PickUpItem);
 	}
 }
 
