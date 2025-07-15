@@ -9,6 +9,16 @@
 #include "ShootTrainnerCharacter.generated.h"
 
 
+UENUM(Flags, BlueprintType, Category="Weapons")
+enum class EWeaponState : uint8
+{
+	Unarmed UMETA(DisplayName = "Unarmed"),
+	Armed UMETA(DisplayName = "Armed"),
+	Firing UMETA(DisplayName = "Firing"),
+	Loading UMETA(DisplayName = "Loading"),
+	Aiming UMETA(DisplayName = "Aiming"),
+};
+
 UCLASS(config=Game)
 class AShootTrainnerCharacter : public ACharacter
 {
@@ -31,8 +41,9 @@ class AShootTrainnerCharacter : public ACharacter
 	/** Jump Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* JumpAction;
-
-	
+	/** Weapon State on the player*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon, meta = (AllowPrivateAccess = "true"))
+	EWeaponState CurrentWeaponState;
 
 	/** Move Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
@@ -50,7 +61,9 @@ public:
 	AShootTrainnerCharacter();
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = pickup, meta = (AllowPrivateAccess = "true"))
-	class AWeapon* pickuppistol;
+	TObjectPtr<AWeapon> pickUpPistol;
+
+	FTransform PistolTransform;
 
 protected:
 	/** Called for movement input */
@@ -67,7 +80,7 @@ protected:
 
 public:
 	void PickUpItem(const FInputActionValue& Value);
-	void AttachPistol(AWeapon* pistol);
+	void AttachPistol(AWeapon* pistol) const;
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
@@ -75,11 +88,3 @@ public:
 };
 
 //Enum class representing the Player-weapon State 
-UENUM(Flags, BlueprintType, Category="Weapons")
-enum class EWeaponState : uint8
-{
-	Firing,
-	Unarmed,
-	Loading,
-	Aiming,
-};

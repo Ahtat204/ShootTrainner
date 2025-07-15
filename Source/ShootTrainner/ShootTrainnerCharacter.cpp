@@ -9,25 +9,21 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include"Components/SceneComponent.h"
 
 
 AShootTrainnerCharacter::AShootTrainnerCharacter()
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
-
-
 	SkeletalMeshComponent = GetMesh();
-
 	// Don't rotate when the controller rotates. Let that just affect the camera.
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = true;
 	bUseControllerRotationRoll = false;
-
 	// Configure character movement
 	GetCharacterMovement()->bOrientRotationToMovement = true; // Character moves in the direction of input...	
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f); // ...at this rotation rate
-
 	// Note: For faster iteration times these variables, and many more, can be tweaked in the Character Blueprint
 	// instead of recompiling to adjust them
 	GetCharacterMovement()->JumpZVelocity = 700.f;
@@ -35,6 +31,7 @@ AShootTrainnerCharacter::AShootTrainnerCharacter()
 	GetCharacterMovement()->MaxWalkSpeed = 500.f;
 	GetCharacterMovement()->MinAnalogWalkSpeed = 20.f;
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
+
 
 	// Create a camera boom (pulls in towards the player if there is a collision)
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
@@ -72,20 +69,20 @@ void AShootTrainnerCharacter::BeginPlay()
 
 void AShootTrainnerCharacter::PickUpItem(const FInputActionValue& Value)
 {
-	auto isArmed=Value.Get<bool>();
-	if (isArmed && GEngine)
+	if (auto isArmed = Value.Get<bool>())
 	{
-		GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Red,"Pick up item");
-		AttachPistol(pickuppistol);
-		
+		AttachPistol(pickUpPistol);
+		CurrentWeaponState=EWeaponState::Armed;
 	}
 }
 
-void AShootTrainnerCharacter::AttachPistol(AWeapon* pistol)
+void AShootTrainnerCharacter::AttachPistol(AWeapon* pistol) const
 {
 	if (pistol)
 	{
-		pistol->AttachToComponent( this->SkeletalMeshComponent,FAttachmentTransformRules::KeepRelativeTransform,TEXT("Weapon"));
+		//pistol->AttachToComponent(this->SkeletalMeshComponent, FAttachmentTransformRules::KeepRelativeTransform,TEXT("Weapon"));
+		pistol->K2_AttachToComponent(this->SkeletalMeshComponent, TEXT("Weapon"), EAttachmentRule::SnapToTarget,
+		                             EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, true);
 	}
 }
 
@@ -106,7 +103,8 @@ void AShootTrainnerCharacter::SetupPlayerInputComponent(class UInputComponent* P
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AShootTrainnerCharacter::Look);
 
 		//interacting
-		EnhancedInputComponent->BindAction(Interact,ETriggerEvent::Triggered,this,&AShootTrainnerCharacter::PickUpItem);
+		EnhancedInputComponent->BindAction(Interact, ETriggerEvent::Triggered, this,
+		                                   &AShootTrainnerCharacter::PickUpItem);
 	}
 }
 

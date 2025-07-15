@@ -15,12 +15,13 @@ AWeapon::AWeapon(const FObjectInitializer& FObjectInitializer)
 	RootComponent = SkeletalMeshComponent;
 
 
+
 	PickupSphere = CreateDefaultSubobject<USphereComponent>(TEXT("PickupSphere"));
 	PickupSphere->SetupAttachment(RootComponent);
 	PickupSphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	PickupSphere->SetCollisionResponseToAllChannels(ECR_Ignore);
 	PickupSphere->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
-	PickupSphere->SetSphereRadius(100.f);
+	PickupSphere->SetSphereRadius(50.f);
 }
 
 // Called when the game starts or when spawned
@@ -42,7 +43,7 @@ void AWeapon::NotifyActorBeginOverlap(AActor* OtherActor)
 	{
 		//if()
 		{
-			player->pickuppistol = this;
+			player->pickUpPistol = this;
 		}
 	}
 }
