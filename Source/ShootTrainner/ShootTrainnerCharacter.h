@@ -59,6 +59,10 @@ class AShootTrainnerCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* AimAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* FireAction;
+	
+
 	FString PlayerState;
 
 private:
@@ -72,7 +76,7 @@ public:
 	void SetCurrentWeaponState(EWeaponState WeaponState);
 
 	//the class constructor 
-	AShootTrainnerCharacter();
+	AShootTrainnerCharacter(const FObjectInitializer& ObjectInitializer);
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = pickup, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<AWeapon> pickUpPistol;
@@ -82,21 +86,21 @@ public:
 	FTransform PistolTransform;
 
 protected:
+
+	void Shoot(const FInputActionValue& Value);
 	void Aim(const FInputActionValue& Value);
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
-
+	///pick up weapon
+	void PickUpItem(const FInputActionValue& Value);
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
-
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
 	// To add mapping context
 	virtual void BeginPlay() override;
 
 public:
-	void PickUpItem(const FInputActionValue& Value);
 	void AttachPistol(AWeapon* pistol);
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE USpringArmComponent* GetCameraBoom() const { return CameraBoom; }

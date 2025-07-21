@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "GameFramework/ProjectileMovementComponent.h"
 #include "Weapon.generated.h"
 
 UCLASS()
@@ -22,8 +23,23 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category="Components")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Components")
 	class USphereComponent* PickupSphere;
 
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
+};
+
+
+UCLASS()
+class ABullet : public AActor
+{
+	GENERATED_BODY()
+
+public:
+	ABullet(const FObjectInitializer& FObjectInitializer);
+	private:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Components",meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UStaticMeshComponent> StaticMeshComponent;
+
+	TObjectPtr<UProjectileMovementComponent> ProjectileMovementComponent;
 };

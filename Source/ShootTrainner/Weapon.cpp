@@ -15,7 +15,6 @@ AWeapon::AWeapon(const FObjectInitializer& FObjectInitializer)
 	RootComponent = SkeletalMeshComponent;
 
 
-
 	PickupSphere = CreateDefaultSubobject<USphereComponent>(TEXT("PickupSphere"));
 	PickupSphere->SetupAttachment(RootComponent);
 	PickupSphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
@@ -45,5 +44,14 @@ void AWeapon::NotifyActorBeginOverlap(AActor* OtherActor)
 		{
 			player->pickUpPistol = this;
 		}
+	}
+}
+
+ABullet::ABullet(const FObjectInitializer& FObjectInitializer)
+{
+	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>("StaticMeshComponent");
+	if (StaticMeshComponent)
+	{
+		RootComponent = StaticMeshComponent;
 	}
 }

@@ -14,15 +14,14 @@
 
 void AShootTrainnerCharacter::SetCurrentWeaponState(EWeaponState EWeaponState)
 {
-	if (CurrentWeaponState!= EWeaponState)
+	if (CurrentWeaponState != EWeaponState)
 	{
 		CurrentWeaponState = EWeaponState;
 		UE_LOG(LogTemp, Warning, TEXT("Weapon state set to: %d"), static_cast<uint8>(CurrentWeaponState));
 	}
-	
 }
 
-AShootTrainnerCharacter::AShootTrainnerCharacter()
+AShootTrainnerCharacter::AShootTrainnerCharacter(const FObjectInitializer& ObjectInitializer)
 {
 	WeaponsState = UEnum::GetValueAsString(this->GetCurrentWeaponState());
 	// Set size for collision capsule
@@ -76,7 +75,6 @@ void AShootTrainnerCharacter::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
-	
 }
 
 
@@ -86,7 +84,6 @@ void AShootTrainnerCharacter::PickUpItem(const FInputActionValue& Value)
 	if (bisArmed)
 	{
 		AttachPistol(pickUpPistol);
-		
 	}
 }
 
@@ -102,6 +99,10 @@ void AShootTrainnerCharacter::AttachPistol(AWeapon* pistol)
 }
 
 
+void AShootTrainnerCharacter::Shoot(const FInputActionValue& Value)
+{
+}
+
 void AShootTrainnerCharacter::Aim(const FInputActionValue& Value)
 {
 	auto isAiming = Value.Get<bool>();
@@ -109,7 +110,6 @@ void AShootTrainnerCharacter::Aim(const FInputActionValue& Value)
 	{
 		SetCurrentWeaponState(isAiming ? EWeaponState::Aiming : EWeaponState::Armed);
 	}
-	
 }
 
 void AShootTrainnerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
