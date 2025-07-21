@@ -12,8 +12,19 @@
 #include"Components/SceneComponent.h"
 
 
+void AShootTrainnerCharacter::SetCurrentWeaponState(EWeaponState EWeaponState)
+{
+	if (CurrentWeaponState!= EWeaponState)
+	{
+		CurrentWeaponState = EWeaponState;
+		UE_LOG(LogTemp, Warning, TEXT("Weapon state set to: %d"), static_cast<uint8>(CurrentWeaponState));
+	}
+	
+}
+
 AShootTrainnerCharacter::AShootTrainnerCharacter()
 {
+	WeaponsState = UEnum::GetValueAsString(this->GetCurrentWeaponState());
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 	SkeletalMeshComponent = GetMesh();
@@ -31,8 +42,6 @@ AShootTrainnerCharacter::AShootTrainnerCharacter()
 	GetCharacterMovement()->MaxWalkSpeed = 500.f;
 	GetCharacterMovement()->MinAnalogWalkSpeed = 20.f;
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
-
-
 	// Create a camera boom (pulls in towards the player if there is a collision)
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(SkeletalMeshComponent,TEXT("head"));
@@ -46,7 +55,9 @@ AShootTrainnerCharacter::AShootTrainnerCharacter()
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
 	GetCharacterMovement()->bOrientRotationToMovement = false;
+	//PlayerState=UEnum::GetValueAsString(CurrentWeaponState);
 
+	SetCurrentWeaponState(EWeaponState::Unarmed);
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 }
@@ -65,29 +76,43 @@ void AShootTrainnerCharacter::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
+	
 }
+
 
 void AShootTrainnerCharacter::PickUpItem(const FInputActionValue& Value)
 {
-	if (auto isArmed = Value.Get<bool>())
+	const auto bisArmed = Value.Get<bool>();
+	if (bisArmed)
 	{
 		AttachPistol(pickUpPistol);
-		CurrentWeaponState=EWeaponState::Armed;
+		
 	}
 }
 
-void AShootTrainnerCharacter::AttachPistol(AWeapon* pistol) const
+void AShootTrainnerCharacter::AttachPistol(AWeapon* pistol)
 {
 	if (pistol)
 	{
 		//pistol->AttachToComponent(this->SkeletalMeshComponent, FAttachmentTransformRules::KeepRelativeTransform,TEXT("Weapon"));
 		pistol->K2_AttachToComponent(this->SkeletalMeshComponent, TEXT("Weapon"), EAttachmentRule::SnapToTarget,
 		                             EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, true);
+		SetCurrentWeaponState(EWeaponState::Armed);
 	}
 }
 
 
-void AShootTrainnerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
+void AShootTrainnerCharacter::Aim(const FInputActionValue& Value)
+{
+	auto isAiming = Value.Get<bool>();
+	if (pickUpPistol)
+	{
+		SetCurrentWeaponState(isAiming ? EWeaponState::Aiming : EWeaponState::Armed);
+	}
+	
+}
+
+void AShootTrainnerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	// Set up action bindings
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
@@ -105,8 +130,12 @@ void AShootTrainnerCharacter::SetupPlayerInputComponent(class UInputComponent* P
 		//interacting
 		EnhancedInputComponent->BindAction(Interact, ETriggerEvent::Triggered, this,
 		                                   &AShootTrainnerCharacter::PickUpItem);
+		//aiming
+		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Triggered, this, &AShootTrainnerCharacter::Aim);
+		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Completed, this, &AShootTrainnerCharacter::Aim);
 	}
 }
+
 
 void AShootTrainnerCharacter::Move(const FInputActionValue& Value)
 {
