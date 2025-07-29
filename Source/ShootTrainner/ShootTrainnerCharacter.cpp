@@ -10,6 +10,9 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include"Components/SceneComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "Particles/ParticleSystemComponent.h"
+#include "Sound/SoundCue.h"
 
 
 void AShootTrainnerCharacter::SetCurrentWeaponState(EWeaponState EWeaponState)
@@ -77,7 +80,6 @@ void AShootTrainnerCharacter::BeginPlay()
 	}
 }
 
-
 void AShootTrainnerCharacter::PickUpItem(const FInputActionValue& Value)
 {
 	const auto bisArmed = Value.Get<bool>();
@@ -98,9 +100,23 @@ void AShootTrainnerCharacter::AttachPistol(AWeapon* pistol)
 	}
 }
 
-
 void AShootTrainnerCharacter::Shoot(const FInputActionValue& Value)
 {
+	auto actionValue = Value.Get<bool>();
+	if (actionValue && CurrentWeaponState == EWeaponState::Aiming)
+	{
+			SetCurrentWeaponState(EWeaponState::Firing);
+		
+			if (pickUpPistol)
+			{
+				UE_LOG(LogTemp, Display, TEXT("Shooting"))
+				UGameplayStatics::PlaySoundAtLocation(this, pickUpPistol->FireSound, GetActorLocation());
+				pickUpPistol->FireBullet();
+				pickUpPistol->FireParticle->Activate();
+			}
+		
+	}
+	
 }
 
 void AShootTrainnerCharacter::Aim(const FInputActionValue& Value)
@@ -133,9 +149,14 @@ void AShootTrainnerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerI
 		//aiming
 		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Triggered, this, &AShootTrainnerCharacter::Aim);
 		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Completed, this, &AShootTrainnerCharacter::Aim);
+		
+		/*Shooting Action binding, Note : here used  ETriggerEvent::Started , which will shoot per click not and not gonna shot while holding,
+		 *since the weapon will be pistol with small ammunition ,
+		 *and using trigger will keep shooting and that will quickly make the weapon out of ammo 
+		 */
+		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Started, this, &AShootTrainnerCharacter::Shoot);
 	}
 }
-
 
 void AShootTrainnerCharacter::Move(const FInputActionValue& Value)
 {
