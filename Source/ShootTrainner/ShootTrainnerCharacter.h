@@ -23,7 +23,7 @@ enum class EWeaponState : uint8
 };
 
 /**
- * Player character
+ * Player character class
  */
 UCLASS(config=Game)
 class AShootTrainnerCharacter : public ACharacter
@@ -65,6 +65,7 @@ class AShootTrainnerCharacter : public ACharacter
 	 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* FireAction;
+private:
 	/** Weapon State on the player*/
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerState", meta = (AllowPrivateAccess = "true"))
 	EWeaponState CurrentWeaponState;

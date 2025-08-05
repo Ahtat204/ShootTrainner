@@ -3,9 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/CapsuleComponent.h"
 #include "GameFramework/Actor.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "PhysicsEngine/RadialForceComponent.h"
+#include"Sound/SoundWave.h"
+#include"Niagara/Public/NiagaraComponent.h"
 #include "Weapon.generated.h"
+
 
 
 class ABullet;
@@ -20,6 +25,7 @@ class SHOOTTRAINNER_API AWeapon : public AActor
 	GENERATED_BODY()
 
 public:
+	void FireBullet();
 	/**
 	 * // Sets default values for this actor's properties
 	 * @param FObjectInitializer Internal class to finalize UObject creation (initialize properties) after the real C++ constructor is called.
@@ -34,7 +40,7 @@ public:
 	TObjectPtr<USkeletalMeshComponent> SkeletalMeshComponent;
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-	void FireBullet();
+	
 	/**
 	 * collision detection function, like Unity's OnEnterCollision()
 	 * @param OtherActor :actor to collide with
@@ -64,11 +70,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Components", meta = (AllowPrivateAccess = "true"))
 	TArray<ABullet*> Bullets;
 	/**
-	 * this is the gun fire visual effect , aka VFX
+	 * this is the gun fire visual effect , aka VFX,small muzzle explosion
 	 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Components")
-	UParticleSystemComponent* FireParticle;
-	
+	UNiagaraComponent* NiagraComponent;
 };
 
 
@@ -79,16 +84,21 @@ class ABullet : public AActor
 
 public:
 	explicit ABullet(const FObjectInitializer& FObjectInitializer);
-
+    UProjectileMovementComponent* GetProjectileMovementComponent() const{return ProjectileMovementComponent;};
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Components", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UStaticMeshComponent> StaticMeshComponent;
 	/// Component responsible for projectile movement behavior 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Components", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UProjectileMovementComponent> ProjectileMovementComponent;
-	/// used for basic collision with targets
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Components", meta = (AllowPrivateAccess = "true"))
+	URadialForceComponent* RadialForceComponent;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Components", meta = (AllowPrivateAccess = "true"))
+	UCapsuleComponent* CapsuleComponent;
 
-
+public:
+	virtual void NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveComponent* OtherComp, bool bSelfMoved,
+		FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit) override;
 	/*class UBoxComponent* BoxComponent;
 	*/
 };

@@ -1,10 +1,40 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Weapon.h"
+
+
 #include "ShootTrainnerCharacter.h"
 #include "Components/SphereComponent.h"
-#include"Particles/ParticleSystemComponent.h"
+#include "Components/CapsuleComponent.h"
 #include"Sound/SoundCue.h"
+
+
+
+
+void AWeapon::FireBullet()
+{
+	if (CurrentAmmo == 0)
+	{
+		
+		UE_LOG(LogTemp, Display, TEXT("Out of ammo, please reload"));
+		return;
+	}
+
+	const FVector SpawnLocation = this->GetActorLocation();
+	const FRotator SpawnRotation = this->GetActorRotation();
+
+	if (BulletClass)
+	{
+		const FActorSpawnParameters SpawnParams;
+
+		if (ABullet* Bullet = GetWorld()->SpawnActor<ABullet>(BulletClass, SpawnLocation, SpawnRotation, SpawnParams))
+		{
+
+			CurrentAmmo--;
+		}
+	}
+	
+}
 
 // Sets default values
 AWeapon::AWeapon(const FObjectInitializer& FObjectInitializer)
@@ -19,8 +49,10 @@ AWeapon::AWeapon(const FObjectInitializer& FObjectInitializer)
 	PickupSphere->SetCollisionResponseToAllChannels(ECR_Ignore);
 	PickupSphere->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
 	PickupSphere->SetSphereRadius(50.f);
-	FireParticle = CreateDefaultSubobject<UParticleSystemComponent>("FireParticleComponent");
 	FireSound=CreateDefaultSubobject<USoundCue>("FireSound");
+	NiagraComponent=CreateDefaultSubobject<UNiagaraComponent>("NiagaraComponent");
+	NiagraComponent->SetupAttachment(SkeletalMeshComponent);
+	
 }
 
 
@@ -30,6 +62,13 @@ AWeapon::AWeapon(const FObjectInitializer& FObjectInitializer)
 void AWeapon::BeginPlay()
 {
 	Super::BeginPlay();
+#if UE_EDITOR
+	if (FireSound==nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("FireSound is NULL"));
+	}
+	#endif
+	
 }
 
 /**
@@ -41,28 +80,7 @@ void AWeapon::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void AWeapon::FireBullet()
-{
-	if (CurrentAmmo == 0)
-	{
-		UE_LOG(LogTemp, Display, TEXT("Out of ammo, please reload"));
-		return;
-	}
 
-	const FVector SpawnLocation = this->GetActorLocation();
-	const FRotator SpawnRotation = this->GetActorRotation();
-
-	if (BulletClass)
-	{
-		const FActorSpawnParameters SpawnParams;
-
-		if (ABullet* Bullet = GetWorld()->SpawnActor<ABullet>(BulletClass, SpawnLocation, SpawnRotation, SpawnParams))
-		{
-			Bullets.Add(Bullet);
-			CurrentAmmo--;
-		}
-	}
-}
 
 
 void AWeapon::NotifyActorBeginOverlap(AActor* OtherActor)
@@ -91,5 +109,23 @@ ABullet::ABullet(const FObjectInitializer& FObjectInitializer)
 		ProjectileMovementComponent->MaxSpeed = 3000.f;
 		ProjectileMovementComponent->bRotationFollowsVelocity = true;
 		ProjectileMovementComponent->bShouldBounce = false;
+		ProjectileMovementComponent->ProjectileGravityScale = 0.f;
+		
 	}
+	RadialForceComponent=CreateDefaultSubobject<URadialForceComponent>("RadialForceComponent");
+	RadialForceComponent->SetupAttachment(RootComponent);
+	RadialForceComponent->ImpulseStrength = 5000.f;
+	CapsuleComponent=CreateDefaultSubobject<UCapsuleComponent>("CollisionCapsule");
+	CapsuleComponent->SetupAttachment(RootComponent);
+	CapsuleComponent->SetCapsuleHalfHeight(81.08f);
+	CapsuleComponent->SetCapsuleRadius(23.944208f);
+	
+}
+
+void ABullet::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveComponent* OtherComp, bool bSelfMoved,
+	FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit)
+{
+	Super::NotifyHit(MyComp, Other, OtherComp, bSelfMoved, HitLocation, HitNormal, NormalImpulse, Hit);
+	RadialForceComponent->FireImpulse();
+	
 }

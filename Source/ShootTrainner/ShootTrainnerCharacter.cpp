@@ -12,7 +12,7 @@
 #include"Components/SceneComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystemComponent.h"
-#include "Sound/SoundCue.h"
+#include"Sound/SoundCue.h"
 
 
 void AShootTrainnerCharacter::SetCurrentWeaponState(EWeaponState EWeaponState)
@@ -20,7 +20,9 @@ void AShootTrainnerCharacter::SetCurrentWeaponState(EWeaponState EWeaponState)
 	if (CurrentWeaponState != EWeaponState)
 	{
 		CurrentWeaponState = EWeaponState;
+#if UE_EDITOR
 		UE_LOG(LogTemp, Warning, TEXT("Weapon state set to: %d"), static_cast<uint8>(CurrentWeaponState));
+#endif
 	}
 }
 
@@ -103,21 +105,21 @@ void AShootTrainnerCharacter::AttachPistol(AWeapon* pistol)
 void AShootTrainnerCharacter::Shoot(const FInputActionValue& Value)
 {
 	auto actionValue = Value.Get<bool>();
+	if (!pickUpPistol) return;
 	if (actionValue && CurrentWeaponState == EWeaponState::Aiming)
 	{
-			SetCurrentWeaponState(EWeaponState::Firing);
-		
-			if (pickUpPistol)
-			{
-				UE_LOG(LogTemp, Display, TEXT("Shooting"))
-				UGameplayStatics::PlaySoundAtLocation(this, pickUpPistol->FireSound, GetActorLocation());
-				pickUpPistol->FireBullet();
-				pickUpPistol->FireParticle->Activate();
-			}
-		
+		SetCurrentWeaponState(EWeaponState::Firing);
+
+		if (CurrentWeaponState == EWeaponState::Firing)
+		{
+			UE_LOG(LogTemp, Display, TEXT("Shooting"))
+			UGameplayStatics::PlaySoundAtLocation(this, pickUpPistol->FireSound, pickUpPistol->GetActorLocation(), 3,
+			                                      5);
+			pickUpPistol->FireBullet();
+		}
 	}
-	
 }
+
 
 void AShootTrainnerCharacter::Aim(const FInputActionValue& Value)
 {
@@ -149,12 +151,14 @@ void AShootTrainnerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerI
 		//aiming
 		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Triggered, this, &AShootTrainnerCharacter::Aim);
 		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Completed, this, &AShootTrainnerCharacter::Aim);
-		
-		/*Shooting Action binding, Note : here used  ETriggerEvent::Started , which will shoot per click not and not gonna shot while holding,
-		 *since the weapon will be pistol with small ammunition ,
-		 *and using trigger will keep shooting and that will quickly make the weapon out of ammo 
+
+		/**
+		 * Shooting Action binding, Note : here used  ETriggerEvent::Started , which will shoot per click not and not gonna shot while holding,
+		 * since the weapon will be pistol with small ammunition ,
+		 * and using trigger will keep shooting and that will quickly make the weapon out of ammo 
 		 */
-		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Started, this, &AShootTrainnerCharacter::Shoot);
+		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Started, this, &AShootTrainnerCharacter::Shoot);
+		//there was an error I overlooked here , I bound Shoot function to LookAction,it should be bound tp FireAction 
 	}
 }
 
