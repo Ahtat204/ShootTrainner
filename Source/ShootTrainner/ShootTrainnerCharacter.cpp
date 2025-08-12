@@ -10,9 +10,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include"Components/SceneComponent.h"
-#include "Kismet/GameplayStatics.h"
-#include "Particles/ParticleSystemComponent.h"
-#include"Sound/SoundCue.h"
+
 
 
 void AShootTrainnerCharacter::SetCurrentWeaponState(EWeaponState EWeaponState)
@@ -72,7 +70,7 @@ void AShootTrainnerCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	//Add Input Mapping Context
-	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
+	if (auto const PlayerController = Cast<APlayerController>(Controller))
 	{
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<
 			UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
@@ -91,12 +89,12 @@ void AShootTrainnerCharacter::PickUpItem(const FInputActionValue& Value)
 	}
 }
 
-void AShootTrainnerCharacter::AttachPistol(AWeapon* pistol)
+void AShootTrainnerCharacter::AttachPistol(AWeapon* Pistol)
 {
-	if (pistol)
+	if (Pistol)
 	{
 		//pistol->AttachToComponent(this->SkeletalMeshComponent, FAttachmentTransformRules::KeepRelativeTransform,TEXT("Weapon"));
-		pistol->K2_AttachToComponent(this->SkeletalMeshComponent, TEXT("Weapon"), EAttachmentRule::SnapToTarget,
+		Pistol->K2_AttachToComponent(this->SkeletalMeshComponent, TEXT("Weapon"), EAttachmentRule::SnapToTarget,
 		                             EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, true);
 		SetCurrentWeaponState(EWeaponState::Armed);
 	}
@@ -104,17 +102,15 @@ void AShootTrainnerCharacter::AttachPistol(AWeapon* pistol)
 
 void AShootTrainnerCharacter::Shoot(const FInputActionValue& Value)
 {
-	auto actionValue = Value.Get<bool>();
+	auto const bActionValue = Value.Get<bool>();
 	if (!pickUpPistol) return;
-	if (actionValue && CurrentWeaponState == EWeaponState::Aiming)
+	if (bActionValue && CurrentWeaponState == EWeaponState::Aiming)
 	{
 		SetCurrentWeaponState(EWeaponState::Firing);
 
 		if (CurrentWeaponState == EWeaponState::Firing)
 		{
 			UE_LOG(LogTemp, Display, TEXT("Shooting"))
-			UGameplayStatics::PlaySoundAtLocation(this, pickUpPistol->FireSound, pickUpPistol->GetActorLocation(), 3,
-			                                      5);
 			pickUpPistol->FireBullet();
 		}
 	}
@@ -123,10 +119,23 @@ void AShootTrainnerCharacter::Shoot(const FInputActionValue& Value)
 
 void AShootTrainnerCharacter::Aim(const FInputActionValue& Value)
 {
-	auto isAiming = Value.Get<bool>();
+	auto const bIsAiming = Value.Get<bool>();
+
 	if (pickUpPistol)
 	{
-		SetCurrentWeaponState(isAiming ? EWeaponState::Aiming : EWeaponState::Armed);
+		SetCurrentWeaponState(bIsAiming ? EWeaponState::Aiming : EWeaponState::Armed);
+	}
+}
+
+void AShootTrainnerCharacter::Reload(const FInputActionValue& Value)
+{
+	if (pickUpPistol->CurrentAmmo == 0)
+	{
+		auto const bIsReloading = Value.Get<bool>();
+		if (bIsReloading)
+		{
+			SetCurrentWeaponState(EWeaponState::Reloading);
+		}
 	}
 }
 
@@ -158,14 +167,14 @@ void AShootTrainnerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerI
 		 * and using trigger will keep shooting and that will quickly make the weapon out of ammo 
 		 */
 		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Started, this, &AShootTrainnerCharacter::Shoot);
-		//there was an error I overlooked here , I bound Shoot function to LookAction,it should be bound tp FireAction 
+		EnhancedInputComponent->BindAction(RelaodAction,ETriggerEvent::Started,this,&AShootTrainnerCharacter::Reload);
 	}
 }
 
 void AShootTrainnerCharacter::Move(const FInputActionValue& Value)
 {
 	// input is a Vector2D
-	FVector2D MovementVector = Value.Get<FVector2D>();
+	const FVector2D MovementVector = Value.Get<FVector2D>();
 
 	if (Controller != nullptr)
 	{
@@ -188,7 +197,7 @@ void AShootTrainnerCharacter::Move(const FInputActionValue& Value)
 void AShootTrainnerCharacter::Look(const FInputActionValue& Value)
 {
 	// input is a Vector2D
-	FVector2D LookAxisVector = Value.Get<FVector2D>();
+	const FVector2D LookAxisVector = Value.Get<FVector2D>();
 
 	if (Controller != nullptr)
 	{

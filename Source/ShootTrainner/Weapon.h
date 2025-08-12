@@ -19,15 +19,18 @@ class ABullet;
 /**
  * base class of all weapons
  */
-UCLASS()
+UCLASS(Blueprintable)
 class SHOOTTRAINNER_API AWeapon : public AActor
 {
 	GENERATED_BODY()
 
 public:
+	/**
+	 * function for Shooting bullets
+	 */
 	void FireBullet();
 	/**
-	 * // Sets default values for this actor's properties
+	 *  Sets default values for this actor's properties
 	 * @param FObjectInitializer Internal class to finalize UObject creation (initialize properties) after the real C++ constructor is called.
 	 */
 	explicit AWeapon(const FObjectInitializer& FObjectInitializer);
@@ -36,7 +39,7 @@ public:
 	/**
 	 * this is the SkeletonMeshComponent for the Pistol
 	 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Components")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Components")
 	TObjectPtr<USkeletalMeshComponent> SkeletalMeshComponent;
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -77,7 +80,7 @@ public:
 };
 
 
-UCLASS()
+UCLASS(Blueprintable)
 class ABullet : public AActor
 {
 	GENERATED_BODY()
@@ -85,20 +88,17 @@ class ABullet : public AActor
 public:
 	explicit ABullet(const FObjectInitializer& FObjectInitializer);
     UProjectileMovementComponent* GetProjectileMovementComponent() const{return ProjectileMovementComponent;};
-private:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Components", meta = (AllowPrivateAccess = "true"))
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Components", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UStaticMeshComponent> StaticMeshComponent;
 	/// Component responsible for projectile movement behavior 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Components", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UProjectileMovementComponent> ProjectileMovementComponent;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Components", meta = (AllowPrivateAccess = "true"))
-	URadialForceComponent* RadialForceComponent;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Components", meta = (AllowPrivateAccess = "true"))
 	UCapsuleComponent* CapsuleComponent;
 
-public:
-	virtual void NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveComponent* OtherComp, bool bSelfMoved,
-		FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit) override;
+
+	
 	/*class UBoxComponent* BoxComponent;
 	*/
 };

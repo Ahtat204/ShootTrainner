@@ -1,39 +1,36 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Weapon.h"
-
-
 #include "ShootTrainnerCharacter.h"
 #include "Components/SphereComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include"Sound/SoundCue.h"
-
-
 
 
 void AWeapon::FireBullet()
 {
-	if (CurrentAmmo == 0)
+	if (CurrentAmmo==0)
+	{if (GEngine)
 	{
-		
-		UE_LOG(LogTemp, Display, TEXT("Out of ammo, please reload"));
-		return;
+		GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, "Out Of Ammo , Please press R to Reload");
 	}
+		
+	}
+	const FVector SpawnLocation = this->SkeletalMeshComponent->GetSocketLocation("Muzzle");
+	const FRotator SpawnRotation = this->SkeletalMeshComponent->GetSocketRotation("Muzzle");
 
-	const FVector SpawnLocation = this->GetActorLocation();
-	const FRotator SpawnRotation = this->GetActorRotation();
-
-	if (BulletClass)
+	if (CurrentAmmo > 0)
 	{
-		const FActorSpawnParameters SpawnParams;
-
-		if (ABullet* Bullet = GetWorld()->SpawnActor<ABullet>(BulletClass, SpawnLocation, SpawnRotation, SpawnParams))
+		if (BulletClass)
 		{
-
+			const FActorSpawnParameters SpawnParams;
+			ABullet* Bullet = GetWorld()->SpawnActor<ABullet>(BulletClass, SpawnLocation, SpawnRotation, SpawnParams);
+			UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation(), 3,
+												  5);
 			CurrentAmmo--;
 		}
 	}
-	
 }
 
 // Sets default values
@@ -49,10 +46,9 @@ AWeapon::AWeapon(const FObjectInitializer& FObjectInitializer)
 	PickupSphere->SetCollisionResponseToAllChannels(ECR_Ignore);
 	PickupSphere->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
 	PickupSphere->SetSphereRadius(50.f);
-	FireSound=CreateDefaultSubobject<USoundCue>("FireSound");
-	NiagraComponent=CreateDefaultSubobject<UNiagaraComponent>("NiagaraComponent");
+	FireSound = CreateDefaultSubobject<USoundCue>("FireSound");
+	NiagraComponent = CreateDefaultSubobject<UNiagaraComponent>("NiagaraComponent");
 	NiagraComponent->SetupAttachment(SkeletalMeshComponent);
-	
 }
 
 
@@ -63,12 +59,11 @@ void AWeapon::BeginPlay()
 {
 	Super::BeginPlay();
 #if UE_EDITOR
-	if (FireSound==nullptr)
+	if (FireSound == nullptr)
 	{
 		UE_LOG(LogTemp, Error, TEXT("FireSound is NULL"));
 	}
-	#endif
-	
+#endif
 }
 
 /**
@@ -79,8 +74,6 @@ void AWeapon::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
-
-
 
 
 void AWeapon::NotifyActorBeginOverlap(AActor* OtherActor)
@@ -97,6 +90,7 @@ void AWeapon::NotifyActorBeginOverlap(AActor* OtherActor)
 
 ABullet::ABullet(const FObjectInitializer& FObjectInitializer)
 {
+	SetActorRelativeRotation(FRotator(0, 0, 0));
 	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>("StaticMeshComponent");
 	if (StaticMeshComponent)
 	{
@@ -105,27 +99,15 @@ ABullet::ABullet(const FObjectInitializer& FObjectInitializer)
 	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>("ProjectileMovementComponent");
 	if (ProjectileMovementComponent)
 	{
-		ProjectileMovementComponent->InitialSpeed = 2000.f;
-		ProjectileMovementComponent->MaxSpeed = 3000.f;
-		ProjectileMovementComponent->bRotationFollowsVelocity = true;
-		ProjectileMovementComponent->bShouldBounce = false;
+		ProjectileMovementComponent->InitialSpeed = 200.f;
+		ProjectileMovementComponent->MaxSpeed = 300.f;
+		ProjectileMovementComponent->bRotationFollowsVelocity = false;
+		ProjectileMovementComponent->bShouldBounce = true;
 		ProjectileMovementComponent->ProjectileGravityScale = 0.f;
-		
 	}
-	RadialForceComponent=CreateDefaultSubobject<URadialForceComponent>("RadialForceComponent");
-	RadialForceComponent->SetupAttachment(RootComponent);
-	RadialForceComponent->ImpulseStrength = 5000.f;
-	CapsuleComponent=CreateDefaultSubobject<UCapsuleComponent>("CollisionCapsule");
+	
+	CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>("CollisionCapsule");
 	CapsuleComponent->SetupAttachment(RootComponent);
 	CapsuleComponent->SetCapsuleHalfHeight(81.08f);
 	CapsuleComponent->SetCapsuleRadius(23.944208f);
-	
-}
-
-void ABullet::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveComponent* OtherComp, bool bSelfMoved,
-	FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit)
-{
-	Super::NotifyHit(MyComp, Other, OtherComp, bSelfMoved, HitLocation, HitNormal, NormalImpulse, Hit);
-	RadialForceComponent->FireImpulse();
-	
 }

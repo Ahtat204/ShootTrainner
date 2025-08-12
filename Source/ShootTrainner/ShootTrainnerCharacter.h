@@ -18,7 +18,7 @@ enum class EWeaponState : uint8
 	Unarmed UMETA(DisplayName = "Unarmed"),
 	Armed UMETA(DisplayName = "Armed"),
 	Firing UMETA(DisplayName = "Firing"),
-	Loading UMETA(DisplayName = "Loading"),
+	Reloading UMETA(DisplayName = "Reloading"),
 	Aiming UMETA(DisplayName = "Aiming"),
 };
 
@@ -65,7 +65,10 @@ class AShootTrainnerCharacter : public ACharacter
 	 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* FireAction;
-private:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* RelaodAction;
+
 	/** Weapon State on the player*/
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerState", meta = (AllowPrivateAccess = "true"))
 	EWeaponState CurrentWeaponState;
@@ -94,6 +97,10 @@ public:
 	FTransform PistolTransform;
 
 protected:
+
+	/// 
+	/// @param Value 
+	void Reload(const FInputActionValue& Value);
 	/**
 	 * Function reponsible for Shooting with weapon
 	 * @param Value 
@@ -121,13 +128,17 @@ protected:
 public:
 	/**
 	 * function used to attach Object to player wanted Socket
-	 * @param pistol Actor pistol to pick up
+	 * @param Pistol Actor pistol to pick up
 	 */
-	void AttachPistol(AWeapon* pistol);
+	void AttachPistol(AWeapon* Pistol);
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 };
+
+
+
+
 
 
