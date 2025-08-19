@@ -4,12 +4,15 @@
 #include "Target.h"
 
 // Sets default values
-ATarget::ATarget()
+ATarget::ATarget(const FObjectInitializer& ObjectInitializer)
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
+    StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
+	RootComponent = StaticMeshComponent;
 }
+
+
 
 // Called when the game starts or when spawned
 void ATarget::BeginPlay()

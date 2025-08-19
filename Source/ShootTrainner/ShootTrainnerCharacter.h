@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
 #include "Weapon.h"
+
 #include "ShootTrainnerCharacter.generated.h"
 
 /**
@@ -69,6 +70,13 @@ class AShootTrainnerCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* RelaodAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Sounds", meta = (AllowPrivateAccess = "true"))
+	USoundCue* ReloadSound;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UAnimMontage* ReloadAnimMontage;
+
+	
 	/** Weapon State on the player*/
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerState", meta = (AllowPrivateAccess = "true"))
 	EWeaponState CurrentWeaponState;
@@ -78,6 +86,9 @@ public:
 	//*getter and setter for the weaponState enum
 	EWeaponState GetCurrentWeaponState() const { return CurrentWeaponState; };
 
+
+
+	
 	void SetCurrentWeaponState(EWeaponState WeaponState);
 
 	/**
@@ -102,7 +113,7 @@ protected:
 	/// @param Value 
 	void Reload(const FInputActionValue& Value);
 	/**
-	 * Function reponsible for Shooting with weapon
+	 * Function responsible for Shooting with weapon
 	 * @param Value 
 	 */
 	void Shoot(const FInputActionValue& Value);

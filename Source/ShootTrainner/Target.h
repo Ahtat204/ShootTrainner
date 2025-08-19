@@ -16,11 +16,16 @@ class SHOOTTRAINNER_API ATarget : public AActor
 	
 public:	
 	// Sets default values for this actor's properties
-	ATarget();
+	explicit ATarget(const FObjectInitializer& ObjectInitializer);
+	
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	/// 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Components", meta = (AllowPrivateAccess = "true"))
+	 UStaticMeshComponent* StaticMeshComponent;
 
 public:	
 	// Called every frame

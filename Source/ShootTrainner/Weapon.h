@@ -63,6 +63,9 @@ public:
 	 * initial number of bullets
 	 */
 	uint32 CurrentAmmo = MagazineSize;
+
+   FORCEINLINE  void ResetAmmo(){	CurrentAmmo=MagazineSize;}
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Components", meta = (AllowPrivateAccess = "true"))
 	class USphereComponent* PickupSphere;
 	/**
@@ -70,6 +73,9 @@ public:
 	 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Sounds", meta = (AllowPrivateAccess = "true"))
 	class USoundCue* FireSound;
+
+	
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Components", meta = (AllowPrivateAccess = "true"))
 	TArray<ABullet*> Bullets;
 	/**

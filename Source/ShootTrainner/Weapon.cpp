@@ -13,7 +13,7 @@ void AWeapon::FireBullet()
 	if (CurrentAmmo==0)
 	{if (GEngine)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, "Out Of Ammo , Please press R to Reload");
+		GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Red, "Out Of Ammo , Please press R to Reload");
 	}
 		
 	}
@@ -26,8 +26,7 @@ void AWeapon::FireBullet()
 		{
 			const FActorSpawnParameters SpawnParams;
 			ABullet* Bullet = GetWorld()->SpawnActor<ABullet>(BulletClass, SpawnLocation, SpawnRotation, SpawnParams);
-			UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation(), 3,
-												  5);
+			UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation(), 3,5);
 			CurrentAmmo--;
 		}
 	}
@@ -49,6 +48,7 @@ AWeapon::AWeapon(const FObjectInitializer& FObjectInitializer)
 	FireSound = CreateDefaultSubobject<USoundCue>("FireSound");
 	NiagraComponent = CreateDefaultSubobject<UNiagaraComponent>("NiagaraComponent");
 	NiagraComponent->SetupAttachment(SkeletalMeshComponent);
+	
 }
 
 
@@ -70,7 +70,7 @@ void AWeapon::BeginPlay()
  * Called every frame
  * @param DeltaTime 
  */
-void AWeapon::Tick(float DeltaTime)
+void AWeapon::Tick(const float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
@@ -87,6 +87,8 @@ void AWeapon::NotifyActorBeginOverlap(AActor* OtherActor)
 		}
 	}
 }
+
+
 
 ABullet::ABullet(const FObjectInitializer& FObjectInitializer)
 {

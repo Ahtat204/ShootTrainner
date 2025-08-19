@@ -10,7 +10,8 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include"Components/SceneComponent.h"
-
+#include "Kismet/GameplayStatics.h"
+#include "Sound/SoundCue.h"
 
 
 void AShootTrainnerCharacter::SetCurrentWeaponState(EWeaponState EWeaponState)
@@ -60,6 +61,8 @@ AShootTrainnerCharacter::AShootTrainnerCharacter(const FObjectInitializer& Objec
 	//PlayerState=UEnum::GetValueAsString(CurrentWeaponState);
 
 	SetCurrentWeaponState(EWeaponState::Unarmed);
+	ReloadSound = CreateDefaultSubobject<USoundCue>("ReloadSound");
+
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 }
@@ -134,8 +137,12 @@ void AShootTrainnerCharacter::Reload(const FInputActionValue& Value)
 		auto const bIsReloading = Value.Get<bool>();
 		if (bIsReloading)
 		{
+			PlayAnimMontage(ReloadAnimMontage);
+			UGameplayStatics::PlaySoundAtLocation(this, ReloadSound, GetActorLocation(), 3,5);
 			SetCurrentWeaponState(EWeaponState::Reloading);
+			pickUpPistol->ResetAmmo();
 		}
+		SetCurrentWeaponState(EWeaponState::Aiming);
 	}
 }
 
@@ -167,7 +174,8 @@ void AShootTrainnerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerI
 		 * and using trigger will keep shooting and that will quickly make the weapon out of ammo 
 		 */
 		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Started, this, &AShootTrainnerCharacter::Shoot);
-		EnhancedInputComponent->BindAction(RelaodAction,ETriggerEvent::Started,this,&AShootTrainnerCharacter::Reload);
+		EnhancedInputComponent->BindAction(RelaodAction, ETriggerEvent::Started, this,
+		                                   &AShootTrainnerCharacter::Reload);
 	}
 }
 
