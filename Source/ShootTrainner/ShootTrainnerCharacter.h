@@ -6,7 +6,6 @@
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
 #include "Weapon.h"
-
 #include "ShootTrainnerCharacter.generated.h"
 
 /**
@@ -38,9 +37,14 @@ class AShootTrainnerCharacter : public ACharacter
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
-	/** MappingContext */
+	/** MappingContext when the playing is Playing a challenge*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
-	class UInputMappingContext* DefaultMappingContext;
+	class UInputMappingContext* ChallengeMappingContext;
+	/**
+	 * mapping context for the Player when he's not playing any challenge, ex:when just walking around  
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputMappingContext* FreeMappingContext;
 	/** Jump Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* JumpAction;
@@ -68,7 +72,7 @@ class AShootTrainnerCharacter : public ACharacter
 	UInputAction* FireAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* RelaodAction;
+	UInputAction* ReloadAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Sounds", meta = (AllowPrivateAccess = "true"))
 	USoundCue* ReloadSound;
@@ -81,6 +85,9 @@ class AShootTrainnerCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerState", meta = (AllowPrivateAccess = "true"))
 	EWeaponState CurrentWeaponState;
 	FString PlayerState;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerState", meta = (AllowPrivateAccess = "true"))
+	APlayerState* ShootrainerPlayerState;
 
 public:
 	//*getter and setter for the weaponState enum

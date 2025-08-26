@@ -1,7 +1,7 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "ShootTrainnerGameMode.h"
-#include "ShootTrainnerCharacter.h"
+#include "ShootTrainnerGameState.h"
 #include "UObject/ConstructorHelpers.h"
 
 AShootTrainnerGameMode::AShootTrainnerGameMode()
@@ -11,5 +11,8 @@ AShootTrainnerGameMode::AShootTrainnerGameMode()
 	if (PlayerPawnBPClass.Class != NULL)
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;
+		
 	}
+	GameStateClass=AShootTrainnerGameState::StaticClass();
+	PlayerStateClass=AShootTrainerPlayerState::StaticClass();
 }

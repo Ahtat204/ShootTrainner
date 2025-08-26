@@ -9,6 +9,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "ShootTrainerPlayerState.h"
 #include"Components/SceneComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Sound/SoundCue.h"
@@ -63,6 +64,7 @@ AShootTrainnerCharacter::AShootTrainnerCharacter(const FObjectInitializer& Objec
 	SetCurrentWeaponState(EWeaponState::Unarmed);
 	ReloadSound = CreateDefaultSubobject<USoundCue>("ReloadSound");
 
+	ShootrainerPlayerState=GetPlayerState<AShootTrainerPlayerState>();
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 }
@@ -78,7 +80,8 @@ void AShootTrainnerCharacter::BeginPlay()
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<
 			UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
-			Subsystem->AddMappingContext(DefaultMappingContext, 0);
+			//create an if statement for switching IMC between the challenge and the free depending on the  UENUM in the GameSate class 
+			Subsystem->AddMappingContext(ChallengeMappingContext, 0);
 		}
 	}
 }
@@ -174,7 +177,7 @@ void AShootTrainnerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerI
 		 * and using trigger will keep shooting and that will quickly make the weapon out of ammo 
 		 */
 		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Started, this, &AShootTrainnerCharacter::Shoot);
-		EnhancedInputComponent->BindAction(RelaodAction, ETriggerEvent::Started, this,
+		EnhancedInputComponent->BindAction(ReloadAction, ETriggerEvent::Started, this,
 		                                   &AShootTrainnerCharacter::Reload);
 	}
 }

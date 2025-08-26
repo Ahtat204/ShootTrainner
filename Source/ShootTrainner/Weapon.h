@@ -55,14 +55,16 @@ public:
 	 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Components", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<ABullet> BulletClass;
+	
 	/**
 	 * maximum number of bullets
 	 */
-	uint32 MagazineSize = 20;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Ammunation", meta = (AllowPrivateAccess = "true"))
+	uint8 MagazineSize = 20;
 	/**
 	 * initial number of bullets
 	 */
-	uint32 CurrentAmmo = MagazineSize;
+	uint8 CurrentAmmo = MagazineSize;
 
    FORCEINLINE  void ResetAmmo(){	CurrentAmmo=MagazineSize;}
 	

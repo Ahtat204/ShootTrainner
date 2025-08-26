@@ -6,6 +6,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "ShootTrainnerGameMode.generated.h"
 
+
 UCLASS(minimalapi)
 class AShootTrainnerGameMode : public AGameModeBase
 {
@@ -13,6 +14,9 @@ class AShootTrainnerGameMode : public AGameModeBase
 
 public:
 	AShootTrainnerGameMode();
+
+	
+	
 };
 
 
