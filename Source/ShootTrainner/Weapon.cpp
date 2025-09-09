@@ -50,8 +50,6 @@ AWeapon::AWeapon(const FObjectInitializer& FObjectInitializer)
 	NiagraComponent->SetupAttachment(SkeletalMeshComponent);
 	
 }
-
-
 /**
  *  Called when the game starts or when spawned
  */

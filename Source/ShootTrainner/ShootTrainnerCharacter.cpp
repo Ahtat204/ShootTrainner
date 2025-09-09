@@ -15,7 +15,15 @@
 #include "Sound/SoundCue.h"
 
 
-void AShootTrainnerCharacter::SetCurrentWeaponState(EWeaponState EWeaponState)
+void AShootTrainnerCharacter::SetCurrentPlayerState(const EPlayerState PlayingState)
+{
+	if (PlayingState!=this->CurrentPlayinState)
+	{
+		this->CurrentPlayinState = PlayingState;
+	}
+}
+
+void AShootTrainnerCharacter::SetCurrentWeaponState(const EWeaponState EWeaponState)
 {
 	if (CurrentWeaponState != EWeaponState)
 	{
@@ -74,6 +82,7 @@ void AShootTrainnerCharacter::BeginPlay()
 	// Call the base class  
 	Super::BeginPlay();
 
+	CurrentPlayinState=EPlayerState::FreeRoam;
 	//Add Input Mapping Context
 	if (auto const PlayerController = Cast<APlayerController>(Controller))
 	{
@@ -85,6 +94,13 @@ void AShootTrainnerCharacter::BeginPlay()
 		}
 	}
 }
+
+void AShootTrainnerCharacter::PlayChallenge(const FInputActionValue& Value)
+{
+	const auto bIsPlaying=Value.Get<bool>();
+	SetCurrentPlayerState(bIsPlaying?EPlayerState::Challenge:EPlayerState::Challenge);
+}
+
 
 void AShootTrainnerCharacter::PickUpItem(const FInputActionValue& Value)
 {
@@ -165,20 +181,17 @@ void AShootTrainnerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerI
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AShootTrainnerCharacter::Look);
 
 		//interacting
-		EnhancedInputComponent->BindAction(Interact, ETriggerEvent::Triggered, this,
-		                                   &AShootTrainnerCharacter::PickUpItem);
-		//aiming
-		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Triggered, this, &AShootTrainnerCharacter::Aim);
-		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Completed, this, &AShootTrainnerCharacter::Aim);
+		EnhancedInputComponent->BindAction(Interact, ETriggerEvent::Triggered, this,&AShootTrainnerCharacter::PickUpItem);
 
-		/**
-		 * Shooting Action binding, Note : here used  ETriggerEvent::Started , which will shoot per click not and not gonna shot while holding,
-		 * since the weapon will be pistol with small ammunition ,
-		 * and using trigger will keep shooting and that will quickly make the weapon out of ammo 
-		 */
-		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Started, this, &AShootTrainnerCharacter::Shoot);
-		EnhancedInputComponent->BindAction(ReloadAction, ETriggerEvent::Started, this,
-		                                   &AShootTrainnerCharacter::Reload);
+#pragma region ChallengeInputs
+			//aiming
+			EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Triggered, this, &AShootTrainnerCharacter::Aim);
+			EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Completed, this, &AShootTrainnerCharacter::Aim);
+			EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Started, this, &AShootTrainnerCharacter::Shoot);
+			EnhancedInputComponent->BindAction(ReloadAction, ETriggerEvent::Started, this,
+											   &AShootTrainnerCharacter::Reload);
+#pragma endregion
+		
 	}
 }
 

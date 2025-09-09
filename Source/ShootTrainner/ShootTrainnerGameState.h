@@ -54,8 +54,7 @@ USTRUCT(BlueprintType)
 struct FChallenge
 {
 	GENERATED_BODY()
-
-public:
+	
 	/**
 	*    Default constructor (needed for UE reflection/Blueprints) FChallenge()
 	 */

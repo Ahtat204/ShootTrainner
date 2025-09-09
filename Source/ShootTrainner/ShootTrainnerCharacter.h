@@ -1,18 +1,31 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
-
 #pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
+#include "InputMappingContext.h"
+#include "ShootTrainnerGameState.h"
 #include "Weapon.h"
+#include "Camera/CameraComponent.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "ShootTrainnerCharacter.generated.h"
 
 /**
- * Enum class representing the Player State with the Weapon,unarmed is the default Player State , which is 0.
- * 
+ * @brief Represents the current weapon-related state of the player.
+ *
+ * This enum is used to track and manage the player's interaction with weapons. 
+ * The default state is Unarmed (value = 0). It can be utilized both in C++ and Blueprints 
+ * to control animations, gameplay logic, and weapon handling mechanics.
+ *
+ * States:
+ * - Unarmed   : The player has no weapon equipped (default state).
+ * - Armed     : The player has a weapon equipped but is not actively using it.
+ * - Firing    : The player is currently firing the equipped weapon.
+ * - Reloading : The player is reloading the equipped weapon.
+ * - Aiming    : The player is aiming down sights or focusing aim with the weapon.
  */
-UENUM(BlueprintType, Category="Weapons")
+UENUM(BlueprintType, Category="Weapons",meta=(ToolTip="Represents the current weapon-related state of the player."))
 enum class EWeaponState : uint8
 {
 	Unarmed UMETA(DisplayName = "Unarmed"),
@@ -23,140 +36,171 @@ enum class EWeaponState : uint8
 };
 
 /**
- * Player character class
+ * @class AShootTrainnerCharacter
+ * @brief Main player character class for the ShootTrainer game.
+ *
+ * This class extends ACharacter to represent the player in a first-person
+ * shooter training environment. It defines camera setup, input bindings,
+ * weapon handling, and state management for various gameplay mechanics such as
+ * shooting, aiming, reloading, and interacting with the environment.
+ *
+ * ### Responsibilities:
+ * - Provides a first-person camera setup using a spring arm and follow camera.
+ * - Handles player input actions (movement, looking, jumping, aiming, shooting, reloading, interacting).
+ * - Manages weapon states (Unarmed, Armed, Firing, Reloading, Aiming).
+ * - Supports attaching and interacting with weapons (e.g., picking up a pistol).
+ * - Integrates animations and sounds for weapon actions (reload montage, reload sound).
+ *
+ * ### Blueprint Integration:
+ * Most properties are exposed to Blueprints to allow designers to modify and
+ * extend the character’s behavior without modifying C++ code.
+ *
+ * @note This class is configured with `config=Game` and designed to be extended in both
+ *       C++ and Blueprints.
  */
 UCLASS(config=Game)
 class AShootTrainnerCharacter : public ACharacter
 {
 	GENERATED_BODY()
-	//despite this is ACharacter-based class , which comes with a SkeletonMeshComponent, this was created to make this character FirstPerson
+
+#pragma region Components
+
+	/** Skeletal Mesh for the player (overrides ACharacter's default for first-person view). */
 	USkeletalMeshComponent* SkeletalMeshComponent;
-	/** Camera boom positioning the camera behind the character */
+	/** Camera boom for positioning the follow camera behind the player. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	class USpringArmComponent* CameraBoom;
-	/** Follow camera */
+	USpringArmComponent* CameraBoom;
+	/** Follow camera providing the player's first-person view. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	class UCameraComponent* FollowCamera;
-	/** MappingContext when the playing is Playing a challenge*/
+	UCameraComponent* FollowCamera;
+#pragma endregion
+#pragma region Inputs
+	/** Input mapping context used when the player is in a challenge. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
-	class UInputMappingContext* ChallengeMappingContext;
-	/**
-	 * mapping context for the Player when he's not playing any challenge, ex:when just walking around  
-	 */
+	UInputMappingContext* ChallengeMappingContext;
+
+	/** Input mapping context used when the player is free-roaming (not in a challenge). */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
-	class UInputMappingContext* FreeMappingContext;
-	/** Jump Input Action */
+	UInputMappingContext* FreeMappingContext;
+
+	/** Input action for jumping. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
-	class UInputAction* JumpAction;
-	/** Move Input Action
-	 */
+	UInputAction* JumpAction;
+
+	/** Input action for player movement. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* MoveAction;
-	/** Look Input Action */
+
+	/** Input action for camera look/rotation. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* LookAction;
-	/**
-	 * pick up input action 
-	 */
+
+	/** Input action for interacting with objects (e.g., picking up weapons). */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* Interact;
-	/**
-	 * Aiming input action
-	 */
+
+	/** Input action for aiming with a weapon. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* AimAction;
-	/**
-	 * Shooting input action
-	 */
+
+	/** Input action for firing a weapon. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* FireAction;
 
+	/** Input action for reloading a weapon. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* ReloadAction;
-
+	/**
+	 * Input Action for entering a challenge
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* PlayAction;
+	/**
+	 * Input Action for Exiting a challenge
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* ExitAction;
+#pragma endregion
+	/** Sound to play when reloading. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Sounds", meta = (AllowPrivateAccess = "true"))
 	USoundCue* ReloadSound;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
+	/** Animation montage to play when reloading. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UAnimMontage* ReloadAnimMontage;
 
-	
-	/** Weapon State on the player*/
+	/** Current weapon state of the player (e.g., Armed, Firing, Reloading). */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerState", meta = (AllowPrivateAccess = "true"))
 	EWeaponState CurrentWeaponState;
-	FString PlayerState;
-
+	/** Reference to the underlying APlayerState associated with this character. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerState", meta = (AllowPrivateAccess = "true"))
 	APlayerState* ShootrainerPlayerState;
+	/**
+	 * Indicates if the player is in a challenge or not
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerState", meta = (AllowPrivateAccess = "true"))
+	EPlayerState CurrentPlayinState;
 
 public:
-	//*getter and setter for the weaponState enum
-	EWeaponState GetCurrentWeaponState() const { return CurrentWeaponState; };
-
-
-
-	
-	void SetCurrentWeaponState(EWeaponState WeaponState);
-
 	/**
-	 * the class constructor, set to explicit to prevent accidental conversion
-	 * @param ObjectInitializer Internal class to finalize UObject creation (initialize properties) after the real C++ constructor is called.
+	 * Constructor (explicit to prevent accidental implicit conversions).
+	 * @param ObjectInitializer Used by Unreal Engine to initialize properties after UObject creation.
 	 */
 	explicit AShootTrainnerCharacter(const FObjectInitializer& ObjectInitializer);
-
-	/**
-	 * Weapon to pick up
-	 */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = pickup, meta = (AllowPrivateAccess = "true"))
+	/** Weapon currently available for pickup (e.g., a pistol). */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pickup, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<AWeapon> pickUpPistol;
 
+	/** Internal string representation of the weapon state (debugging). */
 	FString WeaponsState;
 
-	FTransform PistolTransform;
-
 protected:
-
-	/// 
-	/// @param Value 
+#pragma region InputsFunctions
+	/** Handles reloading input. */
 	void Reload(const FInputActionValue& Value);
-	/**
-	 * Function responsible for Shooting with weapon
-	 * @param Value 
-	 */
+
+	/** Handles shooting input. */
 	void Shoot(const FInputActionValue& Value);
-	/**
-	 * function used to Aim with the weapon
-	 * @param Value 
-	 */
+
+	/** Handles aiming input. */
 	void Aim(const FInputActionValue& Value);
-	/** Called for movement input */
+
+	/** Handles movement input. */
 	void Move(const FInputActionValue& Value);
-	///pick up weapon
+
+	/** Handles item pickup input. */
 	void PickUpItem(const FInputActionValue& Value);
-	/** Called for looking input */
+
+	/** Handles looking input (camera rotation). */
 	void Look(const FInputActionValue& Value);
 	/**
-	 * function reponsible for binding different actions , like Moving, Jumping ,Aiming ...
-	 * @param PlayerInputComponent 
+	 * Handles EPlayerState switching
 	 */
+	void PlayChallenge(const FInputActionValue& Value);
+	/** Binds player inputs to character functions. */
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	// To add mapping context
+#pragma endregion
+	/** Called when the game starts or when the player is spawned. */
 	virtual void BeginPlay() override;
 
 public:
 	/**
-	 * function used to attach Object to player wanted Socket
-	 * @param Pistol Actor pistol to pick up
+	 * Attaches the given pistol to the player’s weapon socket.
+	 * @param Pistol The pistol actor to attach.
 	 */
 	void AttachPistol(AWeapon* Pistol);
-	/** Returns CameraBoom subobject **/
-	FORCEINLINE USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
-	/** Returns FollowCamera subobject **/
-	FORCEINLINE UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
+#pragma region Getters&setters
+	/** @return The camera boom subobject. */
+	[[nodiscard]] FORCEINLINE USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
+	/** @return The follow camera subobject. */
+	[[nodiscard]] FORCEINLINE UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+	void SetCurrentPlayerState(const EPlayerState CurrentPlayerState);
+	/** Getter for the current weapon state. */
+	FORCEINLINE EWeaponState GetCurrentWeaponState() const { return CurrentWeaponState; }
+	/** Setter for the current weapon state. */
+	void SetCurrentWeaponState(EWeaponState WeaponState);
+
+
+#pragma endregion
 };
-
-
-
-
-
-
