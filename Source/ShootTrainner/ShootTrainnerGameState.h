@@ -7,37 +7,55 @@
 #include "GameFramework/GameStateBase.h"
 #include "ShootTrainnerGameState.generated.h"
 
-
+/**
+ * Forward declaration of the challenge struct.
+ * Used to avoid circular dependencies.
+ */
 struct FChallenge;
 
+/**
+ * @class AShootTrainnerGameState
+ * @brief Custom GameState class for ShootTrainer.
+ *
+ * The GameState holds information shared between all players and the server, 
+ * such as the available challenges in the training session.
+ */
 UCLASS()
 class SHOOTTRAINNER_API AShootTrainnerGameState : public AGameStateBase
 {
 	GENERATED_BODY()
-	explicit AShootTrainnerGameState(const FObjectInitializer& ObjectInitializer);
 
 public:
+	/** Constructor with UE object initializer. */
+	explicit AShootTrainnerGameState(const FObjectInitializer& ObjectInitializer);
+
+	/** List of all available challenges in the game session. */
 	TArray<FChallenge> Challenges;
 };
 
 /**
-* enum representing the GameState , for example if you're shooting in the training yard gameState will set to challenge
-*/
+ * @enum EPlayerState
+ * @brief Enum representing the player's current state.
+ *
+ * Example usage:
+ * - @c FreeRoam: The player is free to move around and is not in a challenge.
+ * - @c Challenge: The player is currently engaged in a shooting challenge.
+ */
 UENUM(Blueprintable)
 enum class EPlayerState : uint8
 {
-	/**
-	 * this is the default game state, when the player is not playing any shooting challenge
-	 */
-	FreeRoam UMETA(DisplayName = "FreeRoam"),
-	/**
-	 * this is the GameState when the player is playing a shooting challenge
-	 */
+	/** Default state, when the player is exploring freely. */
+	FreeRoam UMETA(DisplayName = "Free Roam"),
+
+	/** State when the player is actively participating in a shooting challenge. */
 	Challenge UMETA(DisplayName = "Challenge"),
 };
 
 /**
- * an enum representing the difficulty of the challenge from @code Easy @endcode to @code Impossible @endcode 
+ * @enum EDifficultyLevel
+ * @brief Enum representing the difficulty level of a challenge.
+ *
+ * Ranges from @c VeryEasy to @c Insane.
  */
 UENUM(Blueprintable)
 enum class EDifficultyLevel : uint8
@@ -50,42 +68,56 @@ enum class EDifficultyLevel : uint8
 	Insane UMETA(DisplayName = "Insane"),
 };
 
+/**
+ * @struct FChallenge
+ * @brief Data structure representing a shooting challenge.
+ *
+ * Contains details such as difficulty, name, time constraints, 
+ * and score scaling for the challenge.
+ */
 USTRUCT(BlueprintType)
 struct FChallenge
 {
 	GENERATED_BODY()
-	
-	/**
-	*    Default constructor (needed for UE reflection/Blueprints) FChallenge()
-	 */
-	FChallenge(): Difficulty(EDifficultyLevel::Easy), Name(TEXT("Default Challenge")), TimeLimit(60.f), ScoreMultiplier(1.f)
+
+public:
+	/** Default constructor (required for UE reflection/Blueprints). */
+	FChallenge()
+		: Difficulty(EDifficultyLevel::Easy)
+		, Name(TEXT("Default Challenge"))
+		, TimeLimit(60.f)
+		, ScoreMultiplier(1.f)
 	{
 	}
 
-	explicit FChallenge(const EDifficultyLevel CDifficulty, const FString& CName, const float CTimeLimit,
-	                    const float CScoreMultiplier): Difficulty(CDifficulty), Name(CName), TimeLimit(CTimeLimit),
-	                                                   ScoreMultiplier(CScoreMultiplier)
+	/** Parameterized constructor for creating a custom challenge. */
+	explicit FChallenge(
+		const EDifficultyLevel CDifficulty,
+		const FString& CName,
+		const float CTimeLimit,
+		const float CScoreMultiplier)
+		: Difficulty(CDifficulty)
+		, Name(CName)
+		, TimeLimit(CTimeLimit)
+		, ScoreMultiplier(CScoreMultiplier)
 	{
-	};
-	/**
-	 * difficulty of the Challenge
-	 */
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Challenge)
+	}
+
+	/** Difficulty level of the challenge. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Challenge")
 	EDifficultyLevel Difficulty;
-	/**
-	 * Challenge name
-	 */
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Challenge)
+
+	/** Display name of the challenge. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Challenge")
 	FString Name;
-	/**
-	 * Challenge Time limit
-	 */
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Challenge)
+
+	/** Time limit (in seconds) to complete the challenge. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Challenge")
 	float TimeLimit;
-	/**
-	 * the rate of which the score increases
-	 */
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Challenge)
+
+	/** Score multiplier applied during the challenge. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Challenge")
 	float ScoreMultiplier;
-	// add accuracy or score decay if the player doesn't hit the target
+
+	// TODO: Add future properties like accuracy tracking or score decay over time.
 };

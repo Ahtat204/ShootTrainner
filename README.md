@@ -47,4 +47,5 @@ End-of-round stats – accuracy %, reaction time, best streak.
 
 Leaderboard – local or online high scores.
 
-
+Thumbnail:
+<img src="Thumbnail.png">

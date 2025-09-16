@@ -6,6 +6,40 @@
 #include "GameFramework/PlayerState.h"
 #include "ShootTrainerPlayerState.generated.h"
 
+
+/**
+ * @enum EOverlappingState
+ * @brief Represents the state of overlap events between Actors.
+ *
+ * This enum is intended to be used like a simple state machine
+ * for handling overlap logic. Instead of relying on multiple 
+ * boolean flags, the enum tracks the current overlap state in 
+ * a clear and extendable way.
+ *
+ * Example usage:
+ * - @c None    : No overlap is currently occurring.
+ * - @c Started : The overlap event has just begun (OnActorBeginOverlap).
+ * - @c Ended   : The overlap event has just ended (OnActorEndOverlap).
+ */
+UENUM(Category=State)
+enum class EOverlappingState : uint8
+{
+	/** No overlap is active. */
+	None UMETA(DisplayName = "None"),
+
+	/** Overlap has just started. */
+	Started UMETA(DisplayName = "Started"),
+
+	/** Overlap has just ended. */
+	Ended UMETA(DisplayName = "Ended"),
+};
+
+
+
+
+
+
+
 /**
  * AShootTrainerPlayerState
  * 
