@@ -20,6 +20,7 @@ void AChallengeGate::NotifyActorBeginOverlap(AActor* OtherActor)
 	Super::NotifyActorBeginOverlap(OtherActor);
 	if (auto const character=Cast<AShootTrainnerCharacter>(OtherActor))
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Player entered box"));
 		character->SetOverlappingState(EOverlappingState::Started);
 	}
 }
@@ -29,6 +30,7 @@ void AChallengeGate::NotifyActorEndOverlap(AActor* OtherActor)
 	Super::NotifyActorEndOverlap(OtherActor);
 	if (auto const character=Cast<AShootTrainnerCharacter>(OtherActor))
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Player exited the box"));
 		character->SetOverlappingState(EOverlappingState::Ended);
 	}
 }

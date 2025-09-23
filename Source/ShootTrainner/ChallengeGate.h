@@ -7,6 +7,12 @@
 #include "GameFramework/Actor.h"
 #include "ChallengeGate.generated.h"
 
+#if WITH_EDITOR
+	#define LOG(x) UE_LOG(LogTemp, Warning, TEXT("%s"), *FString(x))
+#else
+	#define LOG(x)
+#endif
+
 enum class EDifficultyLevel : uint8;
 
 

@@ -1,6 +1,7 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "ShootTrainnerCharacter.h"
+#include "ChallengeGate.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
@@ -16,9 +17,14 @@
 
 void AShootTrainnerCharacter::PlayChallenge(const FInputActionValue& Value)
 {
-	const auto bIsPlaying=Value.Get<bool>();
-	SetCurrentPlayerState(bIsPlaying?EPlayerState::Challenge:EPlayerState::FreeRoam);
+	const auto bIsPlaying = Value.Get<bool>();
 	
+	if (PlayerOverlappingState != EOverlappingState::Started) return;
+	SetCurrentPlayerState(bIsPlaying ? EPlayerState::Challenge : EPlayerState::FreeRoam);
+	SwitchIMC();
+	auto enumString=UEnum::GetValueAsString(CurrentPlayinState);
+	LOG("overlapping state is set to Started")
+	LOG(enumString)
 }
 
 void AShootTrainnerCharacter::SwitchIMC()
@@ -28,12 +34,13 @@ void AShootTrainnerCharacter::SwitchIMC()
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<
 			UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
-			if (CurrentPlayinState==EPlayerState::Challenge)
+			if (CurrentPlayinState == EPlayerState::Challenge)
 			{
 				Subsystem->RemoveMappingContext(FreeMappingContext);
 				Subsystem->AddMappingContext(ChallengeMappingContext, 1);
+				
 			}
-			if (CurrentPlayinState==EPlayerState::FreeRoam)
+			if (CurrentPlayinState == EPlayerState::FreeRoam)
 			{
 				Subsystem->RemoveMappingContext(ChallengeMappingContext);
 				Subsystem->AddMappingContext(FreeMappingContext, 0);
@@ -44,11 +51,12 @@ void AShootTrainnerCharacter::SwitchIMC()
 
 void AShootTrainnerCharacter::SetCurrentPlayerState(const EPlayerState PlayingState)
 {
-	if (PlayingState!=this->CurrentPlayinState)
+	if (PlayingState != this->CurrentPlayinState)
 	{
 		this->CurrentPlayinState = PlayingState;
 	}
 }
+
 void AShootTrainnerCharacter::SetCurrentWeaponState(const EWeaponState EWeaponState)
 {
 	if (CurrentWeaponState != EWeaponState)
@@ -59,8 +67,10 @@ void AShootTrainnerCharacter::SetCurrentWeaponState(const EWeaponState EWeaponSt
 #endif
 	}
 }
+
 AShootTrainnerCharacter::AShootTrainnerCharacter(const FObjectInitializer& ObjectInitializer)
 {
+	PlayerOverlappingState = EOverlappingState::None;
 	WeaponsState = UEnum::GetValueAsString(this->GetCurrentWeaponState());
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -97,16 +107,17 @@ AShootTrainnerCharacter::AShootTrainnerCharacter(const FObjectInitializer& Objec
 	SetCurrentWeaponState(EWeaponState::Unarmed);
 	ReloadSound = CreateDefaultSubobject<USoundCue>("ReloadSound");
 
-	ShootrainerPlayerState=GetPlayerState<AShootTrainerPlayerState>();
+	ShootrainerPlayerState = GetPlayerState<AShootTrainerPlayerState>();
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 }
+
 void AShootTrainnerCharacter::BeginPlay()
 {
 	// Call the base class  
 	Super::BeginPlay();
 
-	CurrentPlayinState=EPlayerState::FreeRoam;
+	CurrentPlayinState = EPlayerState::FreeRoam;
 	//Add Input Mapping Context
 	if (auto const PlayerController = Cast<APlayerController>(Controller))
 	{
@@ -118,13 +129,19 @@ void AShootTrainnerCharacter::BeginPlay()
 		}
 	}
 }
+
 void AShootTrainnerCharacter::PickUpItem(const FInputActionValue& Value)
 {
-	if (const auto bIsArmed = Value.Get<bool>())
+	
+	const auto bIsArmed = Value.Get<bool>();
+	if (bIsArmed)
 	{
 		AttachPistol(pickUpPistol);
 	}
 }
+
+
+
 void AShootTrainnerCharacter::AttachPistol(AWeapon* Pistol)
 {
 	if (Pistol)
@@ -135,11 +152,11 @@ void AShootTrainnerCharacter::AttachPistol(AWeapon* Pistol)
 		SetCurrentWeaponState(EWeaponState::Armed);
 	}
 }
+
 void AShootTrainnerCharacter::Shoot(const FInputActionValue& Value)
 {
-	
 	auto const bActionValue = Value.Get<bool>();
-	
+
 	if (!pickUpPistol) return;
 	if (bActionValue && CurrentWeaponState == EWeaponState::Aiming)
 	{
@@ -152,6 +169,7 @@ void AShootTrainnerCharacter::Shoot(const FInputActionValue& Value)
 		}
 	}
 }
+
 void AShootTrainnerCharacter::Aim(const FInputActionValue& Value)
 {
 	auto const bIsAiming = Value.Get<bool>();
@@ -160,22 +178,35 @@ void AShootTrainnerCharacter::Aim(const FInputActionValue& Value)
 		SetCurrentWeaponState(bIsAiming ? EWeaponState::Aiming : EWeaponState::Armed);
 	}
 }
+
+void AShootTrainnerCharacter::DropWeapon(const FInputActionValue& Value)
+{
+	if (auto const bIsDroping = Value.Get<bool>())
+	{
+		if (this->pickUpPistol)
+		{
+			
+			pickUpPistol->K2_DetachFromActor(EDetachmentRule::KeepWorld,EDetachmentRule::KeepWorld,EDetachmentRule::KeepRelative);
+			
+		}
+	}
+}
+
 void AShootTrainnerCharacter::Reload(const FInputActionValue& Value)
 {
-	
 	if (pickUpPistol->CurrentAmmo == 0)
 	{
-		auto const bIsReloading = Value.Get<bool>();
-		if (bIsReloading)
+		if (auto const bIsReloading = Value.Get<bool>())
 		{
 			PlayAnimMontage(ReloadAnimMontage);
-			UGameplayStatics::PlaySoundAtLocation(this, ReloadSound, GetActorLocation(), 3,5);
+			UGameplayStatics::PlaySoundAtLocation(this, ReloadSound, GetActorLocation(), 3, 5);
 			SetCurrentWeaponState(EWeaponState::Reloading);
 			pickUpPistol->ResetAmmo();
 		}
 		SetCurrentWeaponState(EWeaponState::Aiming);
 	}
 }
+
 void AShootTrainnerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	// Set up action bindings
@@ -189,17 +220,23 @@ void AShootTrainnerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerI
 		//Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AShootTrainnerCharacter::Look);
 		//interacting
-		EnhancedInputComponent->BindAction(Interact, ETriggerEvent::Triggered, this,&AShootTrainnerCharacter::PickUpItem);
+		EnhancedInputComponent->BindAction(Interact, ETriggerEvent::Started, this,&AShootTrainnerCharacter::PickUpItem);
+		EnhancedInputComponent->BindAction(DropAction, ETriggerEvent::Started, this,&AShootTrainnerCharacter::DropWeapon);
+		
+
+		EnhancedInputComponent->BindAction(PlayAction, ETriggerEvent::Started, this,&AShootTrainnerCharacter::PlayChallenge);
+		EnhancedInputComponent->BindAction(ExitAction,ETriggerEvent::Completed,this,&AShootTrainnerCharacter::PlayChallenge);
 
 #pragma region ChallengeInputs
 		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Triggered, this, &AShootTrainnerCharacter::Aim);
 		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Completed, this, &AShootTrainnerCharacter::Aim);
 		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Started, this, &AShootTrainnerCharacter::Shoot);
-		EnhancedInputComponent->BindAction(ReloadAction, ETriggerEvent::Started, this,&AShootTrainnerCharacter::Reload);
+		EnhancedInputComponent->BindAction(ReloadAction, ETriggerEvent::Started, this,
+		                                   &AShootTrainnerCharacter::Reload);
 #pragma endregion
-		
 	}
 }
+
 void AShootTrainnerCharacter::Move(const FInputActionValue& Value)
 {
 	// input is a Vector2D
@@ -215,13 +252,14 @@ void AShootTrainnerCharacter::Move(const FInputActionValue& Value)
 		const auto ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 
 		// get right vector 
-		const auto  RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+		const auto RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 
 		// add movement 
 		AddMovementInput(ForwardDirection, MovementVector.Y);
 		AddMovementInput(RightDirection, MovementVector.X);
 	}
 }
+
 void AShootTrainnerCharacter::Look(const FInputActionValue& Value)
 {
 	// input is a Vector2D

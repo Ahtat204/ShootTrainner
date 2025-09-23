@@ -105,16 +105,15 @@ class AShootTrainnerCharacter : public ACharacter
 	/** Input action for reloading a weapon. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* ReloadAction;
-	/**
-	 * Input Action for entering a challenge
-	 */
+	/**Input Action for entering a challenge */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* PlayAction;
-	/**
-	 * Input Action for Exiting a challenge
-	 */
+	/**Input Action for Exiting a challenge*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* ExitAction;
+	/**	 Input Action fro dropping attached  items, mainly for dropping weapon*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* DropAction;
 
 	
 #pragma endregion
@@ -149,19 +148,16 @@ protected:
 	void Shoot(const FInputActionValue& Value);
 	/** Handles aiming input. */
 	void Aim(const FInputActionValue& Value);
+	void DropWeapon(const FInputActionValue& Value);
 	/** Handles movement input. */
 	void Move(const FInputActionValue& Value);
 	/** Handles item pickup input. */
 	void PickUpItem(const FInputActionValue& Value);
 	/** Handles looking input (camera rotation). */
 	void Look(const FInputActionValue& Value);
-	/**
-	 * Handles EPlayerState switching and challenge playing
-	 */
+	/** Handles EPlayerState switching and challenge playing*/
 	void PlayChallenge(const FInputActionValue& Value);
-	/**
-	 * function responsible for switching between @code  FreeMappingContext @endcode and @code ChallengeMappingContext @endcode 
-	 */
+	/** function responsible for switching between @code  FreeMappingContext @endcode and @code ChallengeMappingContext @endcode */
 	void SwitchIMC();
 	/** Binds player inputs to character functions. */
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -170,9 +166,6 @@ protected:
 #pragma endregion
 	/** Called when the game starts or when the player is spawned. */
 	virtual void BeginPlay() override;
-
-
-protected:
 #pragma region StateMachine
 	/**
 	 * to distinguish if the player is currently playing a challenge or not
@@ -182,17 +175,9 @@ protected:
 	/** Current weapon state of the player (e.g., Armed, Firing, Reloading). */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerState", meta = (AllowPrivateAccess = "true"))
 	EWeaponState CurrentWeaponState;
-	/**
-	 * Current overlapping state with actors
-	 */
+	/** Current overlapping state with actors,it's used mainly for entering challenge*/
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerState", meta = (AllowPrivateAccess = "true"))
 	EOverlappingState PlayerOverlappingState;
-
-public:
-	
-
-	
-
 protected:
 #pragma endregion
 public:
@@ -201,6 +186,7 @@ public:
 	 * @param Pistol The pistol actor to attach.
 	 */
 	void AttachPistol(AWeapon* Pistol);
+	
 #pragma region Getters&setters
 	/** @return The camera boom subObject. */
 	[[nodiscard]] FORCEINLINE USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
