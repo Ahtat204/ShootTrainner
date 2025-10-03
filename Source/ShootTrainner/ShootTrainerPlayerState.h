@@ -33,13 +33,6 @@ enum class EOverlappingState : uint8
 	/** Overlap has just ended. */
 	Ended UMETA(DisplayName = "Ended"),
 };
-
-
-
-
-
-
-
 /**
  * AShootTrainerPlayerState
  * 

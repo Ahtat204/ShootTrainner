@@ -166,6 +166,7 @@ protected:
 #pragma endregion
 	/** Called when the game starts or when the player is spawned. */
 	virtual void BeginPlay() override;
+	
 #pragma region StateMachine
 	/**
 	 * to distinguish if the player is currently playing a challenge or not
@@ -186,6 +187,9 @@ public:
 	 * @param Pistol The pistol actor to attach.
 	 */
 	void AttachPistol(AWeapon* Pistol);
+
+	/// 
+	UUserWidget* dataWidget;
 	
 #pragma region Getters&setters
 	/** @return The camera boom subObject. */

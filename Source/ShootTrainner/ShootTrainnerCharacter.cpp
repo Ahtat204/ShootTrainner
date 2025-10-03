@@ -18,13 +18,12 @@
 void AShootTrainnerCharacter::PlayChallenge(const FInputActionValue& Value)
 {
 	const auto bIsPlaying = Value.Get<bool>();
-	
 	if (PlayerOverlappingState != EOverlappingState::Started) return;
 	SetCurrentPlayerState(bIsPlaying ? EPlayerState::Challenge : EPlayerState::FreeRoam);
 	SwitchIMC();
-	auto enumString=UEnum::GetValueAsString(CurrentPlayinState);
+	auto EnumString=UEnum::GetValueAsString(CurrentPlayinState);
 	LOG("overlapping state is set to Started")
-	LOG(enumString)
+	LOG(EnumString)
 }
 
 void AShootTrainnerCharacter::SwitchIMC()
