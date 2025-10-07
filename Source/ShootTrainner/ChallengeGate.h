@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "ShootTrainnerGameState.h"
+#include "ShootTrainnerPlayerWidget.h"
 #include "GameFramework/Actor.h"
 #include "ChallengeGate.generated.h"
 
@@ -29,6 +30,8 @@ public:
 	class UBoxComponent* Gate;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Component,meta=(AllowPrivateAccess))
 	FChallenge Challenge;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Component,meta=(AllowPrivateAccess))
+	UShootTrainnerPlayerWidget* ChallengeWidget;
 	// Sets default values for this actor's properties
 	AChallengeGate();
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;

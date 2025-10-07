@@ -2,23 +2,33 @@
 
 
 #include "ShootTrainnerPlayerWidget.h"
+#include"ShootTrainnerGameState.h"
+#include "Components/TextBlock.h"
 
-void UShootTrainnerPlayerWidget::SetChallengeName(UTextBlock* const ChallengeName)
+void UShootTrainnerPlayerWidget::SetChallengeName(UTextBlock* const Challengename)
 {
-	this->ChallengeName = ChallengeName;
+	ChallengeName = Challengename;
 }
 
-void UShootTrainnerPlayerWidget::SetTime(UTextBlock* const Time)
+void UShootTrainnerPlayerWidget::SetTime(UTextBlock* const time)
 {
-	this->Time = Time;
+	Time = time;
 }
 
-void UShootTrainnerPlayerWidget::SetScoreMultiplier(UTextBlock* const ScoreMultiplier)
+void UShootTrainnerPlayerWidget::SetScoreMultiplier(UTextBlock* const Scoremultiplier)
 {
-	this->ScoreMultiplier = ScoreMultiplier;
+	ScoreMultiplier = Scoremultiplier;
 }
 
-void UShootTrainnerPlayerWidget::SetDifficulty(UTextBlock* const Difficulty)
+void UShootTrainnerPlayerWidget::SetDifficulty(UTextBlock* const difficulty)
 {
-	this->Difficulty = Difficulty;
+	Difficulty = difficulty;
+}
+
+ void UShootTrainnerPlayerWidget::Setup(const FChallenge& challenge)
+{
+	this->Challenge = challenge;
+	if (ChallengeName) ChallengeName->SetText(FText::FromString(challenge.Name));
+	if (ScoreMultiplier) ScoreMultiplier->SetText(FText::AsNumber(challenge.ScoreMultiplier));
+	if (Time) Time->SetText(FText::AsNumber(challenge.TimeLimit));
 }

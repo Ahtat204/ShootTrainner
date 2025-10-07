@@ -21,7 +21,7 @@ void AShootTrainnerCharacter::PlayChallenge(const FInputActionValue& Value)
 	if (PlayerOverlappingState != EOverlappingState::Started) return;
 	SetCurrentPlayerState(bIsPlaying ? EPlayerState::Challenge : EPlayerState::FreeRoam);
 	SwitchIMC();
-	auto EnumString=UEnum::GetValueAsString(CurrentPlayinState);
+	auto EnumString=UEnum::GetValueAsString(CurrentPlayingState);
 	LOG("overlapping state is set to Started")
 	LOG(EnumString)
 }
@@ -33,13 +33,13 @@ void AShootTrainnerCharacter::SwitchIMC()
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<
 			UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
-			if (CurrentPlayinState == EPlayerState::Challenge)
+			if (CurrentPlayingState == EPlayerState::Challenge)
 			{
 				Subsystem->RemoveMappingContext(FreeMappingContext);
 				Subsystem->AddMappingContext(ChallengeMappingContext, 1);
 				
 			}
-			if (CurrentPlayinState == EPlayerState::FreeRoam)
+			if (CurrentPlayingState == EPlayerState::FreeRoam)
 			{
 				Subsystem->RemoveMappingContext(ChallengeMappingContext);
 				Subsystem->AddMappingContext(FreeMappingContext, 0);
@@ -50,9 +50,9 @@ void AShootTrainnerCharacter::SwitchIMC()
 
 void AShootTrainnerCharacter::SetCurrentPlayerState(const EPlayerState PlayingState)
 {
-	if (PlayingState != this->CurrentPlayinState)
+	if (PlayingState != this->CurrentPlayingState)
 	{
-		this->CurrentPlayinState = PlayingState;
+		this->CurrentPlayingState = PlayingState;
 	}
 }
 
@@ -116,7 +116,7 @@ void AShootTrainnerCharacter::BeginPlay()
 	// Call the base class  
 	Super::BeginPlay();
 
-	CurrentPlayinState = EPlayerState::FreeRoam;
+	CurrentPlayingState = EPlayerState::FreeRoam;
 	//Add Input Mapping Context
 	if (auto const PlayerController = Cast<APlayerController>(Controller))
 	{
@@ -127,6 +127,11 @@ void AShootTrainnerCharacter::BeginPlay()
 			Subsystem->AddMappingContext(FreeMappingContext, 0);
 		}
 	}
+}
+
+EPlayerState AShootTrainnerCharacter::GetCurrentPlayingState() const
+{
+	return CurrentPlayingState;
 }
 
 void AShootTrainnerCharacter::PickUpItem(const FInputActionValue& Value)

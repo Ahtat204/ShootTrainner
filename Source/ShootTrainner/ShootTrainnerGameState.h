@@ -49,6 +49,7 @@ enum class EPlayerState : uint8
 
 	/** State when the player is actively participating in a shooting challenge. */
 	Challenge UMETA(DisplayName = "Challenge"),
+	
 };
 
 /**

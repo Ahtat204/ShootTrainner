@@ -168,11 +168,14 @@ protected:
 	virtual void BeginPlay() override;
 	
 #pragma region StateMachine
-	/**
-	 * to distinguish if the player is currently playing a challenge or not
-	 */
+	/**to distinguish if the player is currently playing a challenge or not*/
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerState", meta = (AllowPrivateAccess = "true"))
-	EPlayerState CurrentPlayinState;
+	EPlayerState CurrentPlayingState;
+
+public:
+	[[nodiscard]] EPlayerState GetCurrentPlayingState() const;
+
+protected:
 	/** Current weapon state of the player (e.g., Armed, Firing, Reloading). */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerState", meta = (AllowPrivateAccess = "true"))
 	EWeaponState CurrentWeaponState;

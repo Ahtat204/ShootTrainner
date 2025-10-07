@@ -3,9 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ShootTrainnerGameState.h"
 #include "Blueprint/UserWidget.h"
 #include "ShootTrainnerPlayerWidget.generated.h"
 
+struct FChallenge;
 class UTextBlock;
 /**
  * 
@@ -15,6 +17,8 @@ class SHOOTTRAINNER_API UShootTrainnerPlayerWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=( AllowPrivateAccess=true))
+	FChallenge Challenge;
 	/* text block displaying the name of the challenge  */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(ToolTip="text block displaying the name of the challenge ",BindWidget, AllowPrivateAccess=true))
 	UTextBlock* ChallengeName;
@@ -33,4 +37,9 @@ class SHOOTTRAINNER_API UShootTrainnerPlayerWidget : public UUserWidget
 	void SetTime(UTextBlock* const Time);
 	void SetScoreMultiplier(UTextBlock* const ScoreMultiplier);
 	void SetDifficulty(UTextBlock* const Difficulty);
+
+	UFUNCTION(BlueprintCallable)
+	void Setup(const FChallenge& chall);
 };
+
+
