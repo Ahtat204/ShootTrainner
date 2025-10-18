@@ -12,23 +12,39 @@
 UCLASS()
 class SHOOTTRAINNER_API ATarget : public AActor
 {
-	GENERATED_BODY()
+public:
 	
-public:	
+
+private:
+	GENERATED_BODY()
+
+public:
 	// Sets default values for this actor's properties
 	explicit ATarget(const FObjectInitializer& ObjectInitializer);
-	
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="State", meta = (AllowPrivateAccess = "true"))
+	int Hits;
 	/// 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Components", meta = (AllowPrivateAccess = "true"))
-	 UStaticMeshComponent* StaticMeshComponent;
+	UStaticMeshComponent* StaticMeshComponent;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Geometry", meta = (AllowPrivateAccess = "true"))
+	FVector Center;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Geometry", meta = (AllowPrivateAccess = "true"))
+	FVector Impact;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Geometry", meta = (AllowPrivateAccess = "true"))
+	float distance;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Geometry", meta = (AllowPrivateAccess = "true"))
+	USceneComponent* CenterComponent;
 
-public:	
+	void onTakeDamage();
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	UFUNCTION(BlueprintCallable, Category="Collision", meta = (Keyword="Hit"))
+	void OnComponentHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
+	
 };

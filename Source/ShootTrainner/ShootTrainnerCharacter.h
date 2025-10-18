@@ -13,7 +13,7 @@
 #include "ShootTrainnerCharacter.generated.h"
 
 
-enum  class EOverlappingState:uint8;
+enum class EOverlappingState:uint8;
 /**
  * @brief Represents the current weapon-related state of the player.
  *
@@ -28,7 +28,7 @@ enum  class EOverlappingState:uint8;
  * - Reloading : The player is reloading the equipped weapon.
  * - Aiming    : The player is aiming down sights or focusing aim with the weapon.
  */
-UENUM(BlueprintType, Category="Weapons",meta=(ToolTip="Represents the current weapon-related state of the player."))
+UENUM(BlueprintType, Category="Weapons", meta=(ToolTip="Represents the current weapon-related state of the player."))
 enum class EWeaponState : uint8
 {
 	Unarmed UMETA(DisplayName = "Unarmed"),
@@ -115,7 +115,7 @@ class AShootTrainnerCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* DropAction;
 
-	
+
 #pragma endregion
 	/** Sound to play when reloading. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Sounds", meta = (AllowPrivateAccess = "true"))
@@ -127,7 +127,6 @@ class AShootTrainnerCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerState", meta = (AllowPrivateAccess = "true"))
 	APlayerState* ShootrainerPlayerState;
 
-	
 public:
 	/**
 	 * Constructor (explicit to prevent accidental implicit conversions).
@@ -138,7 +137,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pickup, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<AWeapon> pickUpPistol;
 	/** Internal string representation of the weapon state (debugging). */
-	[[maybe_unused]]FString WeaponsState;
+	[[maybe_unused]] FString WeaponsState;
 
 protected:
 #pragma region InputsFunctions
@@ -162,11 +161,11 @@ protected:
 	/** Binds player inputs to character functions. */
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	
+
 #pragma endregion
 	/** Called when the game starts or when the player is spawned. */
 	virtual void BeginPlay() override;
-	
+
 #pragma region StateMachine
 	/**to distinguish if the player is currently playing a challenge or not*/
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerState", meta = (AllowPrivateAccess = "true"))
@@ -182,8 +181,8 @@ protected:
 	/** Current overlapping state with actors,it's used mainly for entering challenge*/
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerState", meta = (AllowPrivateAccess = "true"))
 	EOverlappingState PlayerOverlappingState;
-protected:
 #pragma endregion
+
 public:
 	/**
 	 * Attaches the given pistol to the player’s weapon socket.
@@ -193,7 +192,7 @@ public:
 
 	/// 
 	UUserWidget* dataWidget;
-	
+
 #pragma region Getters&setters
 	/** @return The camera boom subObject. */
 	[[nodiscard]] FORCEINLINE USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
@@ -204,8 +203,12 @@ public:
 	[[nodiscard]] FORCEINLINE EWeaponState GetCurrentWeaponState() const { return CurrentWeaponState; }
 	/** Setter for the current weapon state. */
 	void SetCurrentWeaponState(EWeaponState WeaponState);
-	FORCEINLINE [[nodiscard]] EOverlappingState GetOverlappingState() const{return PlayerOverlappingState;};
-	void SetOverlappingState(const EOverlappingState OverlappingState){this->PlayerOverlappingState = OverlappingState;};
+	FORCEINLINE [[nodiscard]] EOverlappingState GetOverlappingState() const { return PlayerOverlappingState; };
+
+	void SetOverlappingState(const EOverlappingState OverlappingState)
+	{
+		this->PlayerOverlappingState = OverlappingState;
+	};
 
 #pragma endregion
 };

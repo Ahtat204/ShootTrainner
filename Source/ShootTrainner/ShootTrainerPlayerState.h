@@ -43,6 +43,17 @@ enum class EOverlappingState : uint8
 UCLASS()
 class SHOOTTRAINNER_API AShootTrainerPlayerState : public APlayerState
 {
+public:
+	[[nodiscard]] FORCEINLINE  float GetAccuracy() const{return Accuracy;};
+	void SetAccuracy(const float Accuracy);
+	[[nodiscard]] FORCEINLINE  uint8 GetShotsFiredCount() const{return ShotsFiredCount;};
+	void SetShotsFiredCount(const uint8 ShotsFiredCount);
+	[[nodiscard]] FORCEINLINE  uint8 GetTargetHit() const{return TargetHit;};
+	void SetTargetHit(const uint8 TargetHit);
+	[[nodiscard]] FORCEINLINE  float GetTimePlayed() const {return TimePlayed;};
+	void SetTimePlayed(const float TimePlayed);
+
+private:
 	GENERATED_BODY()
 
 public:
@@ -78,6 +89,18 @@ private:
 	 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Stats, meta = (AllowPrivateAccess = "true"))
 	float TimePlayed;
+
+	/**
+	 * 
+	 * @param distance 
+	 */
+	void EvaluateAccuracy(TArray<float> Accuracies)
+	{
+		for (auto acc : Accuracies)
+		{
+			Accuracy += acc/Accuracies.Num();
+		}
+	};
 };
 
 

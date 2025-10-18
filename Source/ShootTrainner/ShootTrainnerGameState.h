@@ -80,8 +80,6 @@ USTRUCT(BlueprintType)
 struct FChallenge
 {
 	GENERATED_BODY()
-
-public:
 	/** Default constructor (required for UE reflection/Blueprints). */
 	FChallenge()
 		: Difficulty(EDifficultyLevel::Easy)
@@ -120,5 +118,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Challenge")
 	float ScoreMultiplier;
 
+
+	float EvaluatePerChallengeAccuracy(float distance) const;
 	// TODO: Add future properties like accuracy tracking or score decay over time.
 };
