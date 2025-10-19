@@ -67,13 +67,6 @@ The C++ source code is organized into logical directories within the `Source/` f
 ShootTrainner/
 ├─ Config/             # UE5 configuration files
 ├─ Source/             # C++ source files
-│  ├─ Player/          # Player character & PlayerState
-│  ├─ GameModes/       # GameState & session logic
-│  ├─ Challenges/      # ChallengeGate & FChallenge
-│  ├─ Weapons/         # Weapons and Bullets
-│  ├─ Targets/         # Shooting Targets
-│  ├─ UI/              # HUD and widgets
-│  └─ Utilities/       # Helper classes
 ├─ ShootTrainner.uproject
 └─ README.md
 ```
