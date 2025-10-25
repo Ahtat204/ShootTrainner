@@ -6,7 +6,6 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/Actor.h"
 #include "GameFramework/ProjectileMovementComponent.h"
-#include "PhysicsEngine/RadialForceComponent.h"
 #include "Sound/SoundWave.h"
 #include "Niagara/Public/NiagaraComponent.h"
 #include "Weapon.generated.h"

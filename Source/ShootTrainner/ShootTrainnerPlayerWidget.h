@@ -7,17 +7,22 @@
 #include "Blueprint/UserWidget.h"
 #include "ShootTrainnerPlayerWidget.generated.h"
 
+class AShootTrainnerCharacter;
 struct FChallenge;
 class UTextBlock;
 /**
  * 
  */
+
+
 UCLASS()
 class SHOOTTRAINNER_API UShootTrainnerPlayerWidget : public UUserWidget
 {
+
+private:
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=( AllowPrivateAccess=true))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(ToolTip="", AllowPrivateAccess=true))
 	FChallenge Challenge;
 	/* text block displaying the name of the challenge  */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(ToolTip="text block displaying the name of the challenge ",BindWidget, AllowPrivateAccess=true))
@@ -37,9 +42,9 @@ class SHOOTTRAINNER_API UShootTrainnerPlayerWidget : public UUserWidget
 	void SetTime(UTextBlock* const Time);
 	void SetScoreMultiplier(UTextBlock* const ScoreMultiplier);
 	void SetDifficulty(UTextBlock* const Difficulty);
-
 	UFUNCTION(BlueprintCallable)
 	void Setup(const FChallenge& chall);
+	
 };
 
 

@@ -32,3 +32,4 @@ void UShootTrainnerPlayerWidget::SetDifficulty(UTextBlock* const difficulty)
 	if (ScoreMultiplier) ScoreMultiplier->SetText(FText::AsNumber(challenge.ScoreMultiplier));
 	if (Time) Time->SetText(FText::AsNumber(challenge.TimeLimit));
 }
+

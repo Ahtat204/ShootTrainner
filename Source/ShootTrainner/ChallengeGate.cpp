@@ -16,7 +16,6 @@ AChallengeGate::AChallengeGate()
 	PrimaryActorTick.bCanEverTick = true;
 	Gate = CreateDefaultSubobject<UBoxComponent>(TEXT("Gate"));
 	Challenge = FChallenge(EDifficultyLevel::Easy, "", 0.0f, 0.0f);
-	
 }
 
 void AChallengeGate::NotifyActorBeginOverlap(AActor* OtherActor)
@@ -27,21 +26,7 @@ void AChallengeGate::NotifyActorBeginOverlap(AActor* OtherActor)
 #if WITH_EDITOR
 		UE_LOG(LogTemp, Warning, TEXT("Player entered box"));
 #endif
-
 		character->SetOverlappingState(EOverlappingState::Started);
-		if (character->GetCurrentPlayingState()==EPlayerState::Challenge)
-		{
-			//if (!ChallengeWidget) return;
-			
-			ChallengeWidget->Setup(Challenge);
-			ChallengeWidget->AddToViewport();
-			
-		}
-		if (character->GetCurrentPlayingState()==EPlayerState::FreeRoam)
-		{
-		//	if (!ChallengeWidget) return;
-			if (ChallengeWidget) ChallengeWidget->RemoveFromParent();
-		}
 	}
 }
 
@@ -61,7 +46,7 @@ void AChallengeGate::NotifyActorEndOverlap(AActor* OtherActor)
 void AChallengeGate::BeginPlay()
 {
 	Super::BeginPlay();
-	ChallengeWidget = CreateWidget<UShootTrainnerPlayerWidget>(GetWorld(), UShootTrainnerPlayerWidget::StaticClass());
+	
 }
 
 // Called every frame

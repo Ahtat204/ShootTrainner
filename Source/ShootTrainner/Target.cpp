@@ -25,7 +25,6 @@ void ATarget::BeginPlay()
 {
 	Super::BeginPlay();
 	Center=CenterComponent->GetComponentLocation();
-	
 	StaticMeshComponent->OnComponentHit.AddDynamic(this, &ATarget::OnComponentHit);
 	
 }

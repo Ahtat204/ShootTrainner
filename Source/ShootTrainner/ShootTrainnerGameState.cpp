@@ -2,7 +2,6 @@
 
 
 #include "ShootTrainnerGameState.h"
-
 AShootTrainnerGameState::AShootTrainnerGameState(const FObjectInitializer& ObjectInitializer)
 {
 }
@@ -10,7 +9,6 @@ AShootTrainnerGameState::AShootTrainnerGameState(const FObjectInitializer& Objec
 float FChallenge::EvaluatePerChallengeAccuracy(float distance) const
 {
 	auto BaseAccuracy = FMath::Exp(-distance / 50);
-	
 	auto GetDifficultyFactor = [](EDifficultyLevel Difficulty) -> float
 	{
 		switch (Difficulty)

@@ -205,10 +205,7 @@ public:
 	void SetCurrentWeaponState(EWeaponState WeaponState);
 	FORCEINLINE [[nodiscard]] EOverlappingState GetOverlappingState() const { return PlayerOverlappingState; };
 
-	void SetOverlappingState(const EOverlappingState OverlappingState)
-	{
-		this->PlayerOverlappingState = OverlappingState;
-	};
+	void SetOverlappingState(const EOverlappingState OverlappingState){this->PlayerOverlappingState = OverlappingState;};
 
 #pragma endregion
 };
