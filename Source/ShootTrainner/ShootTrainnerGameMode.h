@@ -15,7 +15,7 @@ class AShootTrainnerGameMode : public AGameModeBase
 public:
 	AShootTrainnerGameMode();
 
-	
+	virtual void BeginPlay() override;
 	
 };
 

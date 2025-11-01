@@ -15,6 +15,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "Sound/SoundCue.h"
 
+/// 
+/// @param Value 
 void AShootTrainnerCharacter::PlayChallenge(const FInputActionValue& Value)
 {
 	const auto bIsPlaying = Value.Get<bool>();

@@ -2,6 +2,8 @@
 
 #include "ShootTrainnerGameMode.h"
 #include "ShootTrainnerGameState.h"
+#include "ShootTrainnerHUD.h"
+#include "ShootTrainnerPlayerController.h"
 
 #include "UObject/ConstructorHelpers.h"
 
@@ -15,5 +17,13 @@ AShootTrainnerGameMode::AShootTrainnerGameMode()
 	}
 	GameStateClass=AShootTrainnerGameState::StaticClass();
 	PlayerStateClass=AShootTrainerPlayerState::StaticClass();
+//	HUDClass=AShootTrainnerHUD::StaticClass();
+	PlayerControllerClass=AShootTrainnerPlayerController::StaticClass();
 	
+	
+}
+
+void AShootTrainnerGameMode::BeginPlay()
+{
+	Super::BeginPlay();
 }
