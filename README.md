@@ -1,4 +1,4 @@
-## 🎯 ShootTrainer Core Game Logic
+## 🎯 ShootTrainer Core Game Logic ![Status](https://img.shields.io/badge/status-ongoing-green?style=for-the-badge)
 
 This repository contains the core C++ source files for managing the **game state, player mechanics, weapons, and challenges** in the **ShootTrainer** project. These foundational classes and structures define the gameplay flow essential for a first-person shooting training simulator.
 
