@@ -2,7 +2,6 @@
 
 #include "ShootTrainnerGameMode.h"
 #include "ShootTrainnerGameState.h"
-#include "ShootTrainnerHUD.h"
 #include "ShootTrainnerPlayerController.h"
 
 #include "UObject/ConstructorHelpers.h"

@@ -18,7 +18,7 @@ protected:
 
 	// Reference to your Widget Blueprint class (set it in the editor)
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
-	TSubclassOf<class UUserWidget> MainWidgetClass;
+	TSubclassOf< UUserWidget> MainWidgetClass;
 
 private:
 	// The created widget instance

@@ -2,12 +2,12 @@
 
 
 #include "ShootTrainnerPlayerController.h"
-
 #include "Blueprint/UserWidget.h"
 
 void AShootTrainnerPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
+	
 	if (MainWidgetClass)
 	{
 		// Create the widget and assign this controller as the owning player
