@@ -2,21 +2,45 @@
 
 
 #include "ShootTrainnerPlayerController.h"
+
+#include "ShootTrainnerPlayerWidget.h"
 #include "Blueprint/UserWidget.h"
 
 void AShootTrainnerPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	if (MainWidgetClass)
+	if (GetWorld() && GetWorld()->IsGameWorld())
 	{
-		// Create the widget and assign this controller as the owning player
-		MainWidget = CreateWidget<UUserWidget>(this, MainWidgetClass);
-		if (MainWidget)
-		{
-			MainWidget->AddToViewport();
+		// 1. Get the Widget Class reference
+		// Assuming your widget class is loaded via a soft pointer or hardcoded path for testing
+        
+		
+		
+		
+
+			// --- Breakpoint 2: Check Class Validity ---
+			// Is the Widget Class (asset) successfully found and loaded in PIE?
+            
+			// 2. Create the Widget
+			 MyWidget = CreateWidget<UShootTrainnerPlayerWidget>(this, UShootTrainnerPlayerWidget::StaticClass());
+
+			// --- Breakpoint 3: Check Widget Creation Success ---
+			// Is the widget object successfully created (MyWidget is NOT NULL)?
+            
+			if (MyWidget)
+			{
+				// 3. Add to Viewport
+				MyWidget->AddToViewport();
+
+				// --- Breakpoint 4: Check AddToViewport Execution ---
+				// Does the AddToViewport call execute successfully?
+                
+				// 4. (Optional) Set Input Mode
+			
+			
 		}
 	}
-	UE_LOG(LogTemp, Warning, TEXT("PlayerController BeginPlay world: %s"), *GetWorld()->GetName());
-	UE_LOG(LogTemp, Warning, TEXT("MainWidgetClass is %s"), MainWidgetClass ? TEXT("valid") : TEXT("null"));
+
+	UE_LOG(LogTemp, Warning, TEXT("MyWidget is %s"), MyWidget->IsInViewport() ? TEXT("valid") : TEXT("null"));
 }

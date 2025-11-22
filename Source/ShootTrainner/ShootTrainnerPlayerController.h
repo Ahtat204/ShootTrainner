@@ -6,6 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "ShootTrainnerPlayerController.generated.h"
 
+class UShootTrainnerPlayerWidget;
 /**
  * 
  */
@@ -23,5 +24,5 @@ protected:
 private:
 	// The created widget instance
 	UPROPERTY()
-	UUserWidget* MainWidget;
+	UShootTrainnerPlayerWidget* MyWidget;
 };

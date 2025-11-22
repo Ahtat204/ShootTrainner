@@ -5,7 +5,6 @@
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
 #include "InputMappingContext.h"
-
 #include "ShootTrainnerGameState.h"
 #include "Weapon.h"
 #include "Camera/CameraComponent.h"

@@ -129,6 +129,14 @@ void AShootTrainnerCharacter::BeginPlay()
 			Subsystem->AddMappingContext(FreeMappingContext, 0);
 		}
 	}
+////////////////////////////////////////////////
+	
+
+
+////////////////////////////////////////
+
+
+	
 }
 
 EPlayerState AShootTrainnerCharacter::GetCurrentPlayingState() const
