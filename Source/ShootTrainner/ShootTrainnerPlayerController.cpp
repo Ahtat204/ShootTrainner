@@ -12,32 +12,11 @@ void AShootTrainnerPlayerController::BeginPlay()
 	
 	if (GetWorld() && GetWorld()->IsGameWorld())
 	{
-		// 1. Get the Widget Class reference
-		// Assuming your widget class is loaded via a soft pointer or hardcoded path for testing
-        
-		
-		
-		
-
-			// --- Breakpoint 2: Check Class Validity ---
-			// Is the Widget Class (asset) successfully found and loaded in PIE?
-            
-			// 2. Create the Widget
-			 MyWidget = CreateWidget<UShootTrainnerPlayerWidget>(this, UShootTrainnerPlayerWidget::StaticClass());
-
-			// --- Breakpoint 3: Check Widget Creation Success ---
-			// Is the widget object successfully created (MyWidget is NOT NULL)?
-            
+ MyWidget = CreateWidget<UShootTrainnerPlayerWidget>(this, UShootTrainnerPlayerWidget::StaticClass());
 			if (MyWidget)
 			{
-				// 3. Add to Viewport
-				MyWidget->AddToViewport();
-
-				// --- Breakpoint 4: Check AddToViewport Execution ---
-				// Does the AddToViewport call execute successfully?
-                
-				// 4. (Optional) Set Input Mode
-			
+				
+				MyWidget->AddToViewport();			
 			
 		}
 	}
