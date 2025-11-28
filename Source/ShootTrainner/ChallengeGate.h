@@ -77,7 +77,13 @@ public:
      * * @param OtherActor The actor that started the overlap.
      */
     virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
+    /**
+     * 
+     */
+    static  TObjectPtr<AChallengeGate> CurrentChallenge;
 
+    static  TObjectPtr<AChallengeGate> Get();
+    static void Set(TObjectPtr<AChallengeGate> Challenge);
     /**
      * @brief Event called when another actor stops overlapping with this actor.
      * * This function is typically used to hide the interaction UI prompt 
@@ -107,3 +113,5 @@ public:
     // UFUNCTION(BlueprintCallable, Category = "Challenge Gate|Interaction")
     // void ActivateChallenge();
 };
+
+

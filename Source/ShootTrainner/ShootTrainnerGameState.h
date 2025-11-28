@@ -85,7 +85,8 @@ struct FChallenge
 		: Difficulty(EDifficultyLevel::Easy)
 		, Name(TEXT("Default Challenge"))
 		, TimeLimit(60.f)
-		, ScoreMultiplier(1.f)
+		, ScoreMultiplier(1.f),
+	    DifficultyName("easy")
 	{
 	}
 
@@ -94,12 +95,15 @@ struct FChallenge
 		const EDifficultyLevel CDifficulty,
 		const FString& CName,
 		const float CTimeLimit,
-		const float CScoreMultiplier)
+		const float CScoreMultiplier,
+		const FString& CDifficultyName)
 		: Difficulty(CDifficulty)
 		, Name(CName)
 		, TimeLimit(CTimeLimit)
-		, ScoreMultiplier(CScoreMultiplier)
+		, ScoreMultiplier(CScoreMultiplier),
+	     DifficultyName(CDifficultyName)
 	{
+		DifficultyName = UEnum::GetValueAsString(Difficulty);
 	}
 
 	/** Difficulty level of the challenge. */
@@ -117,6 +121,10 @@ struct FChallenge
 	/** Score multiplier applied during the challenge. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Challenge")
 	float ScoreMultiplier;
+
+	/** Score multiplier applied during the challenge. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Challenge")
+	FString DifficultyName;
 
 
 	float EvaluatePerChallengeAccuracy(float distance) const;

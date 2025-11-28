@@ -31,5 +31,8 @@ void UShootTrainnerPlayerWidget::SetDifficulty(UTextBlock* const difficulty)
 	if (ChallengeName) ChallengeName->SetText(FText::FromString(challenge.Name));
 	if (ScoreMultiplier) ScoreMultiplier->SetText(FText::AsNumber(challenge.ScoreMultiplier));
 	if (Time) Time->SetText(FText::AsNumber(challenge.TimeLimit));
+	auto difficultyName = UEnum::GetValueAsString(challenge.Difficulty);
+	if (Difficulty) Difficulty->SetText(FText::FromString(difficultyName));
+	UE_LOG(LogTemp, Error, TEXT(" this function was called "));
 }
 

@@ -3,23 +3,49 @@
 
 #include "ShootTrainnerPlayerController.h"
 
+#include "ChallengeGate.h"
 #include "ShootTrainnerPlayerWidget.h"
+#include"ShootTrainnerCharacter.h"
 #include "Blueprint/UserWidget.h"
+
+AShootTrainnerPlayerController::AShootTrainnerPlayerController(const FObjectInitializer& ObjectInitializer)
+{
+}
 
 void AShootTrainnerPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
+
 	
 	if (GetWorld() && GetWorld()->IsGameWorld())
 	{
- MyWidget = CreateWidget<UShootTrainnerPlayerWidget>(this, UShootTrainnerPlayerWidget::StaticClass());
-			if (MyWidget)
+		PlayerCharacter=GetCharacter();
+		if (!MainWidgetClass) UE_LOG(LogTemp, Error, TEXT(" MainWidgetCLass is null"));
+		if (auto const shootercharacter=Cast<AShootTrainnerCharacter>(PlayerCharacter))
+		{
+			if (shootercharacter->GetOverlappingState()==EOverlappingState::Started)
 			{
-				
-				MyWidget->AddToViewport();			
-			
+				MyWidget=CreateWidget<UShootTrainnerPlayerWidget>(this, MainWidgetClass);
+				if (MyWidget)
+				{
+					if (auto const ChallengeUI=Cast<UShootTrainnerPlayerWidget>(MyWidget))
+					{
+						if (AChallengeGate::CurrentChallenge==nullptr)
+						{
+							UE_LOG(LogTemp, Error, TEXT("%p is null"),static_cast<const void*>(AChallengeGate::CurrentChallenge));
+						}
+						//	ChallengeUI->Challenge= AChallengeGate::CurrentChallenge->Challenge;
+						ChallengeUI->Setup(AChallengeGate::CurrentChallenge->Challenge);
+						MyWidget->AddToViewport();
+					}
+					else
+					{
+						UE_LOG(LogTemp,Error,TEXT("error in "))
+					}
+				}
+			}
 		}
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("MyWidget is %s"), MyWidget->IsInViewport() ? TEXT("valid") : TEXT("null"));
+	
 }

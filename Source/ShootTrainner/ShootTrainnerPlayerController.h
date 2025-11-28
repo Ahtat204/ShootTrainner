@@ -6,14 +6,21 @@
 #include "GameFramework/PlayerController.h"
 #include "ShootTrainnerPlayerController.generated.h"
 
+class AShootTrainnerCharacter;
 class UShootTrainnerPlayerWidget;
+class AChallengeGate;
 /**
  * 
  */
 UCLASS()
 class SHOOTTRAINNER_API AShootTrainnerPlayerController : public APlayerController
 {
+public:
+	AShootTrainnerPlayerController(const FObjectInitializer& ObjectInitializer); ;
+
+
 	GENERATED_BODY()
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -21,8 +28,14 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
 	TSubclassOf< UUserWidget> MainWidgetClass;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
+	AChallengeGate* GetCurrentChallenge;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
+	ACharacter* PlayerCharacter;
+
 private:
 	// The created widget instance
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI",meta=(AllowPrivateAccess=true))
 	UShootTrainnerPlayerWidget* MyWidget;
 };

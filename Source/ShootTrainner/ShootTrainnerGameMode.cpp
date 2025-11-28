@@ -11,6 +11,9 @@ AShootTrainnerGameMode::AShootTrainnerGameMode()
 	// set default pawn class to our Blueprinted character
 	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(
 		TEXT("/Game/ThirdPerson/Blueprints/BP_ThirdPersonCharacter"));
+	
+	static ConstructorHelpers::FClassFinder<APlayerController> PlayeControllerBPClass(
+		TEXT("/Game/BP_PlayerController"));
 	if (PlayerPawnBPClass.Class != nullptr)
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;
@@ -18,7 +21,7 @@ AShootTrainnerGameMode::AShootTrainnerGameMode()
 	GameStateClass = AShootTrainnerGameState::StaticClass();
 	PlayerStateClass = AShootTrainerPlayerState::StaticClass();
 	//	HUDClass=AShootTrainnerHUD::StaticClass();
-	PlayerControllerClass = AShootTrainnerPlayerController::StaticClass();
+	if (PlayerStateClass != nullptr) PlayerControllerClass = PlayeControllerBPClass.Class;
 }
 
 void AShootTrainnerGameMode::BeginPlay()

@@ -18,10 +18,8 @@ class UTextBlock;
 UCLASS()
 class SHOOTTRAINNER_API UShootTrainnerPlayerWidget : public UUserWidget
 {
-
-private:
 	GENERATED_BODY()
-
+public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(ToolTip="", AllowPrivateAccess=true))
 	FChallenge Challenge;
 	/* text block displaying the name of the challenge  */
