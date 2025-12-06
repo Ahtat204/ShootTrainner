@@ -64,9 +64,7 @@ UCLASS(config=Game)
 class AShootTrainnerCharacter : public ACharacter
 {
 	GENERATED_BODY()
-
 #pragma region Components
-
 	/** Skeletal Mesh for the player (overrides ACharacter's default for first-person view). */
 	USkeletalMeshComponent* SkeletalMeshComponent;
 	/** Camera boom for positioning the follow camera behind the player. */
@@ -113,8 +111,6 @@ class AShootTrainnerCharacter : public ACharacter
 	/**	 Input Action fro dropping attached  items, mainly for dropping weapon*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* DropAction;
-
-
 #pragma endregion
 	/** Sound to play when reloading. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Sounds", meta = (AllowPrivateAccess = "true"))
@@ -125,7 +121,6 @@ class AShootTrainnerCharacter : public ACharacter
 	/** Reference to the underlying APlayerState associated with this character. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerState", meta = (AllowPrivateAccess = "true"))
 	APlayerState* ShootrainerPlayerState;
-
 public:
 	/**
 	 * Constructor (explicit to prevent accidental implicit conversions).
@@ -137,7 +132,6 @@ public:
 	TObjectPtr<AWeapon> pickUpPistol;
 	/** Internal string representation of the weapon state (debugging). */
 	[[maybe_unused]] FString WeaponsState;
-
 protected:
 #pragma region InputsFunctions
 	/** Handles reloading input. */
@@ -159,20 +153,15 @@ protected:
 	void SwitchIMC();
 	/** Binds player inputs to character functions. */
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-
 #pragma endregion
 	/** Called when the game starts or when the player is spawned. */
 	virtual void BeginPlay() override;
-
 #pragma region StateMachine
 	/**to distinguish if the player is currently playing a challenge or not*/
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerState", meta = (AllowPrivateAccess = "true"))
 	EPlayerState CurrentPlayingState;
-
 public:
 	[[nodiscard]] EPlayerState GetCurrentPlayingState() const;
-
 protected:
 	/** Current weapon state of the player (e.g., Armed, Firing, Reloading). */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerState", meta = (AllowPrivateAccess = "true"))
@@ -181,17 +170,12 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerState", meta = (AllowPrivateAccess = "true"))
 	EOverlappingState PlayerOverlappingState;
 #pragma endregion
-
 public:
 	/**
 	 * Attaches the given pistol to the player’s weapon socket.
 	 * @param Pistol The pistol actor to attach.
 	 */
 	void AttachPistol(AWeapon* Pistol);
-
-	/// 
-	UUserWidget* dataWidget;
-
 #pragma region Getters&setters
 	/** @return The camera boom subObject. */
 	[[nodiscard]] FORCEINLINE USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
@@ -203,8 +187,10 @@ public:
 	/** Setter for the current weapon state. */
 	void SetCurrentWeaponState(EWeaponState WeaponState);
 	FORCEINLINE [[nodiscard]] EOverlappingState GetOverlappingState() const { return PlayerOverlappingState; };
-
-	void SetOverlappingState(const EOverlappingState OverlappingState){this->PlayerOverlappingState = OverlappingState;};
+	void SetOverlappingState(const EOverlappingState OverlappingState)
+	{
+		this->PlayerOverlappingState = OverlappingState;
+	};
 
 #pragma endregion
 };

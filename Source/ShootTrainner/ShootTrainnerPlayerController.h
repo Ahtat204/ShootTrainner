@@ -26,16 +26,15 @@ protected:
 
 	// Reference to your Widget Blueprint class (set it in the editor)
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
-	TSubclassOf< UUserWidget> MainWidgetClass;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
-	AChallengeGate* GetCurrentChallenge;
+	TSubclassOf<UUserWidget> MainWidgetClass;
+	public:
+	static TObjectPtr<AChallengeGate> GetCurrentChallenge;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
 	ACharacter* PlayerCharacter;
 
 private:
 	// The created widget instance
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI",meta=(AllowPrivateAccess=true))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI", meta=(AllowPrivateAccess=true))
 	UShootTrainnerPlayerWidget* MyWidget;
 };

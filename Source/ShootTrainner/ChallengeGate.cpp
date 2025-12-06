@@ -4,13 +4,12 @@
 #include "ChallengeGate.h"
 
 #include "ShootTrainnerCharacter.h"
+#include "ShootTrainnerPlayerController.h"
 #include "ShootTrainnerPlayerWidget.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/BoxComponent.h"
 #include "Components/Widget.h"
 
-
-TObjectPtr<AChallengeGate> AChallengeGate::CurrentChallenge = nullptr;
 
 // Sets default values
 AChallengeGate::AChallengeGate()
@@ -18,9 +17,7 @@ AChallengeGate::AChallengeGate()
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	Gate = CreateDefaultSubobject<UBoxComponent>(TEXT("Gate"));
-	Challenge = FChallenge(EDifficultyLevel::Easy, "", 0.0f, 0.0f,"");
-	
-
+	Challenge = FChallenge(EDifficultyLevel::Easy, "", 0.0f, 0.0f, "");
 }
 
 void AChallengeGate::NotifyActorBeginOverlap(AActor* OtherActor)
@@ -28,11 +25,13 @@ void AChallengeGate::NotifyActorBeginOverlap(AActor* OtherActor)
 	Super::NotifyActorBeginOverlap(OtherActor);
 	if (auto const character = Cast<AShootTrainnerCharacter>(OtherActor))
 	{
+		/*
 #if WITH_EDITOR
 		UE_LOG(LogTemp, Warning, TEXT("Player entered box"));
 #endif
+*/
+		AShootTrainnerPlayerController::GetCurrentChallenge = this;
 		character->SetOverlappingState(EOverlappingState::Started);
-		CurrentChallenge=this;
 	}
 }
 
@@ -45,6 +44,7 @@ void AChallengeGate::NotifyActorEndOverlap(AActor* OtherActor)
 		UE_LOG(LogTemp, Warning, TEXT("Player exited the box"));
 #endif
 		character->SetOverlappingState(EOverlappingState::Ended);
+		AShootTrainnerPlayerController::GetCurrentChallenge = nullptr;
 	}
 }
 
@@ -52,7 +52,6 @@ void AChallengeGate::NotifyActorEndOverlap(AActor* OtherActor)
 void AChallengeGate::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame
@@ -60,6 +59,7 @@ void AChallengeGate::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
+
 /*
  AChallengeGate* AChallengeGate::Get()
 {

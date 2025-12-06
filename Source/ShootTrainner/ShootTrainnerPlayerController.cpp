@@ -7,6 +7,7 @@
 #include "ShootTrainnerPlayerWidget.h"
 #include"ShootTrainnerCharacter.h"
 #include "Blueprint/UserWidget.h"
+TObjectPtr<AChallengeGate> AShootTrainnerPlayerController::GetCurrentChallenge = nullptr;
 
 AShootTrainnerPlayerController::AShootTrainnerPlayerController(const FObjectInitializer& ObjectInitializer)
 {
@@ -15,37 +16,31 @@ AShootTrainnerPlayerController::AShootTrainnerPlayerController(const FObjectInit
 void AShootTrainnerPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-
-	
-	if (GetWorld() && GetWorld()->IsGameWorld())
+	if (!GetWorld() || !GetWorld()->IsGameWorld())
 	{
-		PlayerCharacter=GetCharacter();
-		if (!MainWidgetClass) UE_LOG(LogTemp, Error, TEXT(" MainWidgetCLass is null"));
-		if (auto const shootercharacter=Cast<AShootTrainnerCharacter>(PlayerCharacter))
+		return;
+	}
+	PlayerCharacter = GetCharacter();
+	if (auto const shootercharacter = Cast<AShootTrainnerCharacter>(PlayerCharacter))
+	{
+		if (shootercharacter->GetOverlappingState() == EOverlappingState::Started)
 		{
-			if (shootercharacter->GetOverlappingState()==EOverlappingState::Started)
+			UE_LOG(LogGameMode, Log, TEXT("%d"), shootercharacter->GetOverlappingState());
+			if (!MainWidgetClass)
 			{
-				MyWidget=CreateWidget<UShootTrainnerPlayerWidget>(this, MainWidgetClass);
-				if (MyWidget)
+				UE_LOG(LogTemp, Error, TEXT("MainWidget is null "));
+				return;
+			}
+			MyWidget = CreateWidget<UShootTrainnerPlayerWidget>(this, MainWidgetClass);
+			if (!MyWidget) return;
+			if (auto const ChallengeUI = Cast<UShootTrainnerPlayerWidget>(MyWidget))
+			{
+				if (GetCurrentChallenge && GetCurrentChallenge.Get())
 				{
-					if (auto const ChallengeUI=Cast<UShootTrainnerPlayerWidget>(MyWidget))
-					{
-						if (AChallengeGate::CurrentChallenge==nullptr)
-						{
-							UE_LOG(LogTemp, Error, TEXT("%p is null"),static_cast<const void*>(AChallengeGate::CurrentChallenge));
-						}
-						//	ChallengeUI->Challenge= AChallengeGate::CurrentChallenge->Challenge;
-						ChallengeUI->Setup(AChallengeGate::CurrentChallenge->Challenge);
-						MyWidget->AddToViewport();
-					}
-					else
-					{
-						UE_LOG(LogTemp,Error,TEXT("error in "))
-					}
+					//	GetCurrentChallenge = AChallengeGate::CurrentChallenge;
+				
 				}
 			}
 		}
 	}
-
-	
 }

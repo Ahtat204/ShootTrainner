@@ -21,7 +21,7 @@ AShootTrainnerGameMode::AShootTrainnerGameMode()
 	GameStateClass = AShootTrainnerGameState::StaticClass();
 	PlayerStateClass = AShootTrainerPlayerState::StaticClass();
 	//	HUDClass=AShootTrainnerHUD::StaticClass();
-	if (PlayerStateClass != nullptr) PlayerControllerClass = PlayeControllerBPClass.Class;
+	if (PlayeControllerBPClass.Class != nullptr)PlayerControllerClass = PlayeControllerBPClass.Class;
 }
 
 void AShootTrainnerGameMode::BeginPlay()

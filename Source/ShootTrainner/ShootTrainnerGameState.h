@@ -41,7 +41,7 @@ public:
  * - @c FreeRoam: The player is free to move around and is not in a challenge.
  * - @c Challenge: The player is currently engaged in a shooting challenge.
  */
-UENUM(Blueprintable)
+UENUM(Blueprintable,meta=(Name="Challenge"))
 enum class EPlayerState : uint8
 {
 	/** Default state, when the player is exploring freely. */
