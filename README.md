@@ -3,7 +3,8 @@
 This repository contains the core C++ source files for managing the **game state, player mechanics, weapons, and challenges** in the **ShootTrainer** project. These foundational classes and structures define the gameplay flow essential for a first-person shooting training simulator.
 
 -----
-
+## Project Diagram 
+<img src="Classes%20Diagram.png" alt="Diagram">
 ## ⚙️ Key C++ Components
 
 ### 1\. Game State and Data
