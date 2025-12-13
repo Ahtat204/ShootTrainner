@@ -7,7 +7,7 @@
 #include "ShootTrainnerPlayerWidget.h"
 #include"ShootTrainnerCharacter.h"
 #include "Blueprint/UserWidget.h"
-TObjectPtr<AChallengeGate> AShootTrainnerPlayerController::GetCurrentChallenge = nullptr;
+
 
 AShootTrainnerPlayerController::AShootTrainnerPlayerController(const FObjectInitializer& ObjectInitializer)
 {
@@ -16,6 +16,7 @@ AShootTrainnerPlayerController::AShootTrainnerPlayerController(const FObjectInit
 void AShootTrainnerPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
+	/*
 	if (!GetWorld() || !GetWorld()->IsGameWorld())
 	{
 		return;
@@ -43,4 +44,6 @@ void AShootTrainnerPlayerController::BeginPlay()
 			}
 		}
 	}
+	*/
+	
 }

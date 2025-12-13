@@ -30,7 +30,7 @@ void AChallengeGate::NotifyActorBeginOverlap(AActor* OtherActor)
 		UE_LOG(LogTemp, Warning, TEXT("Player entered box"));
 #endif
 */
-		AShootTrainnerPlayerController::GetCurrentChallenge = this;
+		//AShootTrainnerPlayerController::GetCurrentChallenge = this;
 		character->SetOverlappingState(EOverlappingState::Started);
 	}
 }
@@ -44,7 +44,7 @@ void AChallengeGate::NotifyActorEndOverlap(AActor* OtherActor)
 		UE_LOG(LogTemp, Warning, TEXT("Player exited the box"));
 #endif
 		character->SetOverlappingState(EOverlappingState::Ended);
-		AShootTrainnerPlayerController::GetCurrentChallenge = nullptr;
+		//AShootTrainnerPlayerController::GetCurrentChallenge = nullptr;
 	}
 }
 

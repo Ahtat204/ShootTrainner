@@ -41,7 +41,7 @@ public:
  * - @c FreeRoam: The player is free to move around and is not in a challenge.
  * - @c Challenge: The player is currently engaged in a shooting challenge.
  */
-UENUM(Blueprintable,meta=(Name="Challenge"))
+UENUM(Blueprintable,meta=(Name="Challenge",ShortTooltip="used indicate what's the player doing"))
 enum class EPlayerState : uint8
 {
 	/** Default state, when the player is exploring freely. */
@@ -58,14 +58,14 @@ enum class EPlayerState : uint8
  *
  * Ranges from @c VeryEasy to @c Insane.
  */
-UENUM(Blueprintable)
+UENUM(Blueprintable ,Category="Challenge")
 enum class EDifficultyLevel : uint8
 {
 	VeryEasy UMETA(DisplayName = "Very Easy"),
 	Easy UMETA(DisplayName = "Easy"),
 	Normal UMETA(DisplayName = "Normal"),
 	Hard UMETA(DisplayName = "Hard"),
-	VeryHard UMETA(DisplayName = "Very Hard"),
+	VeryHard UMETA(DisplayName = "Impossible"),
 	Insane UMETA(DisplayName = "Insane"),
 };
 
@@ -127,6 +127,11 @@ struct FChallenge
 	FString DifficultyName;
 
 
+	/**
+	 * 
+	 * @param distance 
+	 * @return 
+	 */
 	float EvaluatePerChallengeAccuracy(float distance) const;
 	// TODO: Add future properties like accuracy tracking or score decay over time.
 };
