@@ -38,10 +38,7 @@ void ATarget::onTakeDamage()
 void ATarget::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	
-
 }
-
 void ATarget::OnComponentHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
 	FVector NormalImpulse, const FHitResult& Hit)
 {
