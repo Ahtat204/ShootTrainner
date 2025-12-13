@@ -18,17 +18,10 @@ class UTextBlock;
 UCLASS()
 class SHOOTTRAINNER_API UShootTrainnerPlayerWidget : public UUserWidget
 {
-protected:
-	virtual void NativeConstruct() override;
-
-	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
-
-private:
 	GENERATED_BODY()
-
 public:
 #pragma region fields
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(ToolTip="", AllowPrivateAccess=true))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(ToolTip="text block the name of the challenge", AllowPrivateAccess=true))
 	FChallenge Challenge;
 	/* text block displaying the name of the challenge  */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,
@@ -44,16 +37,13 @@ public:
 	/* text block displaying the difficulty level of the challenge*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(BindWidget, AllowPrivateAccess=true))
 	UTextBlock* Difficulty;
-
 	int32 elapsedTime=1;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(ToolTip="", AllowPrivateAccess=true))
 	FTimerHandle ChallengeTimer;
 #pragma endregion
 #pragma region functions
-	void SetChallengeName(UTextBlock* const ChallengeName);
+protected:
+	virtual void NativeConstruct() override;
 	void SetTime();
-	void SetScoreMultiplier(UTextBlock* const ScoreMultiplier);
-	void SetDifficulty(UTextBlock* const Difficulty);
-	void UpdateTime();
 #pragma endregion
 };

@@ -111,7 +111,11 @@ class AShootTrainnerCharacter : public ACharacter
 	/**	 Input Action fro dropping attached  items, mainly for dropping weapon*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* DropAction;
+	///input action for showing Pause menu
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* StopGame;
 #pragma endregion
+#pragma region Effects
 	/** Sound to play when reloading. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Sounds", meta = (AllowPrivateAccess = "true"))
 	USoundCue* ReloadSound;
@@ -119,8 +123,7 @@ class AShootTrainnerCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UAnimMontage* ReloadAnimMontage;
 	/** Reference to the underlying APlayerState associated with this character. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerState", meta = (AllowPrivateAccess = "true"))
-	APlayerState* ShootrainerPlayerState;
+#pragma endregion
 public:
 	/**
 	 * Constructor (explicit to prevent accidental implicit conversions).
@@ -160,20 +163,19 @@ protected:
 	/**to distinguish if the player is currently playing a challenge or not*/
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerState", meta = (AllowPrivateAccess = "true"))
 	EPlayerState CurrentPlayingState;
-public:
-	[[nodiscard]] EPlayerState GetCurrentPlayingState() const;
-protected:
 	/** Current weapon state of the player (e.g., Armed, Firing, Reloading). */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerState", meta = (AllowPrivateAccess = "true"))
 	EWeaponState CurrentWeaponState;
 	/** Current overlapping state with actors,it's used mainly for entering challenge*/
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerState", meta = (AllowPrivateAccess = "true"))
 	EOverlappingState PlayerOverlappingState;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerState", meta = (AllowPrivateAccess = "true"))
+	APlayerState* ShootrainerPlayerState;
 #pragma endregion
 public:
 	/**
 	 * Attaches the given pistol to the player’s weapon socket.
-	 * @param Pistol The pistol actor to attach.
+	 * @param Pistol The pistol actor to attach to the player character
 	 */
 	void AttachPistol(AWeapon* Pistol);
 #pragma region Getters&setters
@@ -187,10 +189,10 @@ public:
 	/** Setter for the current weapon state. */
 	void SetCurrentWeaponState(EWeaponState WeaponState);
 	FORCEINLINE [[nodiscard]] EOverlappingState GetOverlappingState() const { return PlayerOverlappingState; };
+	[[nodiscard]] EPlayerState GetCurrentPlayingState() const;
 	void SetOverlappingState(const EOverlappingState OverlappingState)
 	{
 		this->PlayerOverlappingState = OverlappingState;
 	};
-
 #pragma endregion
 };

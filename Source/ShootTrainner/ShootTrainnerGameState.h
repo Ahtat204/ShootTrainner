@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "ShootTrainerPlayerState.h"
 #include "GameFramework/GameStateBase.h"
+#include "PacketHandlers/StatelessConnectHandlerComponent.h"
 #include "ShootTrainnerGameState.generated.h"
 
 /**
@@ -104,6 +105,8 @@ struct FChallenge
 	     DifficultyName(CDifficultyName)
 	{
 		DifficultyName = UEnum::GetValueAsString(Difficulty);
+		FString left;
+		DifficultyName.Split(TEXT("::"), &left, &DifficultyName);
 	}
 
 	/** Difficulty level of the challenge. */
