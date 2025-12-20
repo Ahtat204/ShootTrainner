@@ -11,6 +11,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "ShootTrainerPlayerState.h"
+#include "ShootTrainnerPlayerController.h"
 #include"Components/SceneComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Sound/SoundCue.h"
@@ -23,7 +24,7 @@ void AShootTrainnerCharacter::PlayChallenge(const FInputActionValue& Value)
 	if (PlayerOverlappingState != EOverlappingState::Started) return;
 	SetCurrentPlayerState(bIsPlaying ? EPlayerState::Challenge : EPlayerState::FreeRoam);
 	SwitchIMC();
-	auto EnumString=UEnum::GetValueAsString(CurrentPlayingState);
+	auto EnumString = UEnum::GetValueAsString(CurrentPlayingState);
 	LOG("overlapping state is set to Started")
 	LOG(EnumString)
 }
@@ -39,13 +40,24 @@ void AShootTrainnerCharacter::SwitchIMC()
 			{
 				Subsystem->RemoveMappingContext(FreeMappingContext);
 				Subsystem->AddMappingContext(ChallengeMappingContext, 1);
-				
 			}
 			if (CurrentPlayingState == EPlayerState::FreeRoam)
 			{
 				Subsystem->RemoveMappingContext(ChallengeMappingContext);
 				Subsystem->AddMappingContext(FreeMappingContext, 0);
 			}
+		}
+	}
+}
+
+void AShootTrainnerCharacter::PauseGame(const FInputActionValue& Value)
+{
+	auto const bIsPaused = Value.Get<bool>();
+	if (GetWorld())
+	{
+		if (const auto PlayerController = Cast<AShootTrainnerPlayerController>(Controller))
+		{
+			PlayerController->ShowPauseMenu(bIsPaused);
 		}
 	}
 }
@@ -129,14 +141,6 @@ void AShootTrainnerCharacter::BeginPlay()
 			Subsystem->AddMappingContext(FreeMappingContext, 0);
 		}
 	}
-////////////////////////////////////////////////
-	
-
-
-////////////////////////////////////////
-
-
-	
 }
 
 EPlayerState AShootTrainnerCharacter::GetCurrentPlayingState() const
@@ -146,15 +150,12 @@ EPlayerState AShootTrainnerCharacter::GetCurrentPlayingState() const
 
 void AShootTrainnerCharacter::PickUpItem(const FInputActionValue& Value)
 {
-	
 	const auto bIsArmed = Value.Get<bool>();
 	if (bIsArmed)
 	{
 		AttachPistol(pickUpPistol);
 	}
 }
-
-
 
 void AShootTrainnerCharacter::AttachPistol(AWeapon* Pistol)
 {
@@ -199,9 +200,8 @@ void AShootTrainnerCharacter::DropWeapon(const FInputActionValue& Value)
 	{
 		if (this->pickUpPistol)
 		{
-			
-			pickUpPistol->K2_DetachFromActor(EDetachmentRule::KeepWorld,EDetachmentRule::KeepWorld,EDetachmentRule::KeepRelative);
-			
+			pickUpPistol->K2_DetachFromActor(EDetachmentRule::KeepWorld, EDetachmentRule::KeepWorld,
+			                                 EDetachmentRule::KeepRelative);
 		}
 	}
 }
@@ -224,29 +224,22 @@ void AShootTrainnerCharacter::Reload(const FInputActionValue& Value)
 void AShootTrainnerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	// Set up action bindings
-	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
+	if (auto EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
 	{
-		//Jumping
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ACharacter::Jump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
-		//Moving
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AShootTrainnerCharacter::Move);
-		//Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AShootTrainnerCharacter::Look);
-		//interacting
-		EnhancedInputComponent->BindAction(Interact, ETriggerEvent::Started, this,&AShootTrainnerCharacter::PickUpItem);
+		EnhancedInputComponent->BindAction(Interact, ETriggerEvent::Started, this,  &AShootTrainnerCharacter::PickUpItem);
 		EnhancedInputComponent->BindAction(DropAction, ETriggerEvent::Started, this,&AShootTrainnerCharacter::DropWeapon);
-		
-
 		EnhancedInputComponent->BindAction(PlayAction, ETriggerEvent::Started, this,&AShootTrainnerCharacter::PlayChallenge);
-		EnhancedInputComponent->BindAction(ExitAction,ETriggerEvent::Completed,this,&AShootTrainnerCharacter::PlayChallenge);
-
+		EnhancedInputComponent->BindAction(ExitAction, ETriggerEvent::Completed, this, &AShootTrainnerCharacter::PlayChallenge);
+		EnhancedInputComponent->BindAction(PauseAction, ETriggerEvent::Triggered, this, &AShootTrainnerCharacter::PauseGame);
 #pragma region ChallengeInputs
 		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Triggered, this, &AShootTrainnerCharacter::Aim);
 		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Completed, this, &AShootTrainnerCharacter::Aim);
 		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Started, this, &AShootTrainnerCharacter::Shoot);
-		EnhancedInputComponent->BindAction(ReloadAction, ETriggerEvent::Started, this,
-		                                   &AShootTrainnerCharacter::Reload);
+		EnhancedInputComponent->BindAction(ReloadAction, ETriggerEvent::Started, this,&AShootTrainnerCharacter::Reload);
 #pragma endregion
 	}
 }
