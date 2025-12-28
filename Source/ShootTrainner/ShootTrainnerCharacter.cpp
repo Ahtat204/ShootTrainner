@@ -15,9 +15,7 @@
 #include"Components/SceneComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Sound/SoundCue.h"
-
-/// 
-/// @param Value 
+ 
 void AShootTrainnerCharacter::PlayChallenge(const FInputActionValue& Value)
 {
 	const auto bIsPlaying = Value.Get<bool>();
@@ -85,59 +83,40 @@ AShootTrainnerCharacter::AShootTrainnerCharacter(const FObjectInitializer& Objec
 {
 	PlayerOverlappingState = EOverlappingState::None;
 	WeaponsState = UEnum::GetValueAsString(this->GetCurrentWeaponState());
-	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 	SkeletalMeshComponent = GetMesh();
-	// Don't rotate when the controller rotates. Let that just affect the camera.
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = true;
 	bUseControllerRotationRoll = false;
-	// Configure character movement
-	GetCharacterMovement()->bOrientRotationToMovement = true; // Character moves in the direction of input...	
-	GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f); // ...at this rotation rate
-	// Note: For faster iteration times these variables, and many more, can be tweaked in the Character Blueprint
-	// instead of recompiling to adjust them
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+	GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f);
 	GetCharacterMovement()->JumpZVelocity = 700.f;
 	GetCharacterMovement()->AirControl = 0.35f;
 	GetCharacterMovement()->MaxWalkSpeed = 500.f;
 	GetCharacterMovement()->MinAnalogWalkSpeed = 20.f;
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
-	// Create a camera boom (pulls in towards the player if there is a collision)
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(SkeletalMeshComponent,TEXT("head"));
-	CameraBoom->TargetArmLength = 400.0f; // The camera follows at this distance behind the character	
-	CameraBoom->bUsePawnControlRotation = true; // Rotate the arm based on the controller
-
-	// Create a follow camera
+	CameraBoom->TargetArmLength = 400.0f; 
+	CameraBoom->bUsePawnControlRotation = true; 
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
-	// Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
-	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
-
+	FollowCamera->bUsePawnControlRotation = false; 
 	GetCharacterMovement()->bOrientRotationToMovement = false;
-	//PlayerState=UEnum::GetValueAsString(CurrentWeaponState);
-
 	SetCurrentWeaponState(EWeaponState::Unarmed);
 	ReloadSound = CreateDefaultSubobject<USoundCue>("ReloadSound");
-
 	ShootrainerPlayerState = GetPlayerState<AShootTrainerPlayerState>();
-	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
-	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 }
 
 void AShootTrainnerCharacter::BeginPlay()
 {
-	// Call the base class  
 	Super::BeginPlay();
-
 	CurrentPlayingState = EPlayerState::FreeRoam;
-	//Add Input Mapping Context
 	if (auto const PlayerController = Cast<APlayerController>(Controller))
 	{
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<
 			UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
-			//create an if statement for switching IMC between the challenge and the free depending on the  UENUM in the GameSate class 
 			Subsystem->AddMappingContext(FreeMappingContext, 0);
 		}
 	}
@@ -150,8 +129,7 @@ EPlayerState AShootTrainnerCharacter::GetCurrentPlayingState() const
 
 void AShootTrainnerCharacter::PickUpItem(const FInputActionValue& Value)
 {
-	const auto bIsArmed = Value.Get<bool>();
-	if (bIsArmed)
+	if (const auto bIsArmed = Value.Get<bool>())
 	{
 		AttachPistol(pickUpPistol);
 	}
@@ -223,7 +201,6 @@ void AShootTrainnerCharacter::Reload(const FInputActionValue& Value)
 
 void AShootTrainnerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
-	// Set up action bindings
 	if (auto EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
 	{
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ACharacter::Jump);
@@ -234,7 +211,7 @@ void AShootTrainnerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerI
 		EnhancedInputComponent->BindAction(DropAction, ETriggerEvent::Started, this,&AShootTrainnerCharacter::DropWeapon);
 		EnhancedInputComponent->BindAction(PlayAction, ETriggerEvent::Started, this,&AShootTrainnerCharacter::PlayChallenge);
 		EnhancedInputComponent->BindAction(ExitAction, ETriggerEvent::Completed, this, &AShootTrainnerCharacter::PlayChallenge);
-		EnhancedInputComponent->BindAction(PauseAction, ETriggerEvent::Triggered, this, &AShootTrainnerCharacter::PauseGame);
+		EnhancedInputComponent->BindAction(PauseAction, ETriggerEvent::Started, this, &AShootTrainnerCharacter::PauseGame);
 #pragma region ChallengeInputs
 		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Triggered, this, &AShootTrainnerCharacter::Aim);
 		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Completed, this, &AShootTrainnerCharacter::Aim);
@@ -246,22 +223,13 @@ void AShootTrainnerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerI
 
 void AShootTrainnerCharacter::Move(const FInputActionValue& Value)
 {
-	// input is a Vector2D
 	const FVector2D MovementVector = Value.Get<FVector2D>();
-
 	if (Controller != nullptr)
 	{
-		// find out which way is forward
 		const auto Rotation = Controller->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
-
-		// get forward vector
 		const auto ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-
-		// get right vector 
 		const auto RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-
-		// add movement 
 		AddMovementInput(ForwardDirection, MovementVector.Y);
 		AddMovementInput(RightDirection, MovementVector.X);
 	}
@@ -269,12 +237,10 @@ void AShootTrainnerCharacter::Move(const FInputActionValue& Value)
 
 void AShootTrainnerCharacter::Look(const FInputActionValue& Value)
 {
-	// input is a Vector2D
-	const auto LookAxisVector = Value.Get<FVector2D>();
 
+	const auto LookAxisVector = Value.Get<FVector2D>();
 	if (Controller != nullptr)
 	{
-		// add yaw and pitch input to controller
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
 	}

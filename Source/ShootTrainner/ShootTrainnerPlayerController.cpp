@@ -26,13 +26,12 @@ void AShootTrainnerPlayerController::ShowPauseMenu(const bool& switcher)
 		if (switcher)
 		{
 			MenuWidget->AddToViewport();
-			UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(this, MenuWidget);
-			UGameplayStatics::SetGamePaused(GetWorld(), true);
+			
 		}
-		else
+		if (!switcher)
 		{
 			MenuWidget->RemoveFromParent();
-			UGameplayStatics::SetGamePaused(GetWorld(), false);
+		
 		}
 		
 	}
