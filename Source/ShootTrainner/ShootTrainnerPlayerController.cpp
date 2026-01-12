@@ -28,10 +28,13 @@ void AShootTrainnerPlayerController::ShowPauseMenu(const bool& switcher)
 		if (switcher)
 		{
 			MenuWidget->AddToViewport();
+			UGameplayStatics::SetGamePaused(GetWorld(), true);
+			UWidgetBlueprintLibrary::SetInputMode_GameAndUIEx(this, MenuWidget,EMouseLockMode::LockOnCapture);
 			
 		}
 		if (!switcher)
 		{
 			MenuWidget->RemoveFromParent();
+			UGameplayStatics::SetGamePaused(GetWorld(), false);
 		}
 }

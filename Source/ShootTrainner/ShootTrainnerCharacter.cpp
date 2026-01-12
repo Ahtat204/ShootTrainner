@@ -211,6 +211,7 @@ void AShootTrainnerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerI
 		EnhancedInputComponent->BindAction(PlayAction, ETriggerEvent::Started, this,&AShootTrainnerCharacter::PlayChallenge);
 		EnhancedInputComponent->BindAction(ExitAction, ETriggerEvent::Completed, this, &AShootTrainnerCharacter::PlayChallenge);
 		EnhancedInputComponent->BindAction(PauseAction, ETriggerEvent::Started, this, &AShootTrainnerCharacter::PauseGame);
+		EnhancedInputComponent->BindAction(PauseAction, ETriggerEvent::Canceled, this, &AShootTrainnerCharacter::PauseGame);
 #pragma region ChallengeInputs
 		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Triggered, this, &AShootTrainnerCharacter::Aim);
 		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Completed, this, &AShootTrainnerCharacter::Aim);
