@@ -7,8 +7,7 @@
 #include "ShootTrainnerPlayerController.generated.h"
 
 class AShootTrainnerCharacter;
-class UShootTrainnerPlayerWidget;
-class AChallengeGate;
+
 /**
  * 
  */
@@ -18,13 +17,12 @@ class SHOOTTRAINNER_API AShootTrainnerPlayerController : public APlayerControlle
 public:
 	AShootTrainnerPlayerController(const FObjectInitializer& ObjectInitializer); 
 	GENERATED_BODY()
-protected:
 	virtual void BeginPlay() override;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
-	TSubclassOf<UUserWidget> MainWidgetClass;
+	TSubclassOf<UUserWidget> PauseMenuWidget;
+	UUserWidget* MenuWidget;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
 	ACharacter* PlayerCharacter;
-private:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI", meta=(AllowPrivateAccess=true))
-	UShootTrainnerPlayerWidget* MyWidget;
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	void ShowPauseMenu(const bool& switcher);
 };

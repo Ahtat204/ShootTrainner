@@ -1,4 +1,3 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
 #pragma once
 
 #include "CoreMinimal.h"
@@ -36,7 +35,6 @@ enum class EWeaponState : uint8
 	Reloading UMETA(DisplayName = "Reloading"),
 	Aiming UMETA(DisplayName = "Aiming"),
 };
-
 /**
  * @class AShootTrainnerCharacter
  * @brief Main player character class for the ShootTrainer game.
@@ -111,9 +109,9 @@ class AShootTrainnerCharacter : public ACharacter
 	/**	 Input Action fro dropping attached  items, mainly for dropping weapon*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* DropAction;
-	///input action for showing Pause menu
+	/** input action for showing Pause menu */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* StopGame;
+	UInputAction* PauseAction;
 #pragma endregion
 #pragma region Effects
 	/** Sound to play when reloading. */
@@ -154,6 +152,8 @@ protected:
 	void PlayChallenge(const FInputActionValue& Value);
 	/** function responsible for switching between @code  FreeMappingContext @endcode and @code ChallengeMappingContext @endcode */
 	void SwitchIMC();
+	/** Handles Pause/resume game with a Pause Menu */
+	void PauseGame(const FInputActionValue& Value);
 	/** Binds player inputs to character functions. */
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 #pragma endregion

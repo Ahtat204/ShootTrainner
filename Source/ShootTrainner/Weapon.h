@@ -1,5 +1,3 @@
-// Fill out your copyright notice...
-
 #pragma once
 
 #include "CoreMinimal.h"

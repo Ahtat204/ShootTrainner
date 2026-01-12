@@ -3,47 +3,38 @@
 
 #include "ShootTrainnerPlayerController.h"
 
-#include "ChallengeGate.h"
-#include "ShootTrainnerPlayerWidget.h"
-#include"ShootTrainnerCharacter.h"
+#include "UMG/Public/Blueprint/WidgetBlueprintLibrary.h"
 #include "Blueprint/UserWidget.h"
+#include "Kismet/GameplayStatics.h"
 
 
 AShootTrainnerPlayerController::AShootTrainnerPlayerController(const FObjectInitializer& ObjectInitializer)
 {
+	
 }
 
 void AShootTrainnerPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-	/*
-	if (!GetWorld() || !GetWorld()->IsGameWorld())
+}
+
+void AShootTrainnerPlayerController::ShowPauseMenu(const bool& switcher)
+{
+	if (!PauseMenuWidget) UE_LOG(LogTemp, Error, TEXT("Error , Widget  is nullptr"));
+	if (MenuWidget==nullptr)
 	{
-		return;
+		MenuWidget = CreateWidget<UUserWidget>(this, PauseMenuWidget);
 	}
-	PlayerCharacter = GetCharacter();
-	if (auto const shootercharacter = Cast<AShootTrainnerCharacter>(PlayerCharacter))
-	{
-		if (shootercharacter->GetOverlappingState() == EOverlappingState::Started)
+		if (switcher)
 		{
-			UE_LOG(LogGameMode, Log, TEXT("%d"), shootercharacter->GetOverlappingState());
-			if (!MainWidgetClass)
-			{
-				UE_LOG(LogTemp, Error, TEXT("MainWidget is null "));
-				return;
-			}
-			MyWidget = CreateWidget<UShootTrainnerPlayerWidget>(this, MainWidgetClass);
-			if (!MyWidget) return;
-			if (auto const ChallengeUI = Cast<UShootTrainnerPlayerWidget>(MyWidget))
-			{
-				if (GetCurrentChallenge && GetCurrentChallenge.Get())
-				{
-					//	GetCurrentChallenge = AChallengeGate::CurrentChallenge;
-				
-				}
-			}
+			MenuWidget->AddToViewport();
+			UGameplayStatics::SetGamePaused(GetWorld(), true);
+			UWidgetBlueprintLibrary::SetInputMode_GameAndUIEx(this, MenuWidget,EMouseLockMode::LockOnCapture);
+			
 		}
-	}
-	*/
-	
+		if (!switcher)
+		{
+			MenuWidget->RemoveFromParent();
+			UGameplayStatics::SetGamePaused(GetWorld(), false);
+		}
 }
