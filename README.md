@@ -53,9 +53,9 @@ The player character binds the following actions to control movement, combat, an
 | **Fire**     | `Left Mouse Button`  | Shoot weapon                    |
 | **Aim**      | `Right Mouse Button` | Aim down sights                 |
 | **Reload**   | `R`                  | Reload weapon                   |
-| **Interact** | `E`                  | Pick up items / start challenge |
+| **Open**     | `O`                  | Open a Door                     |
 | **Drop**     | `Q`                  | Drop equipped weapon            |
-| **Play**     | `P`                  | Start challenge manually        |
+| **Play**     | `P`                  | Open Pause Menu                 |
 | **Exit**     | `Esc`                | Exit challenge                  |
 
 -----
