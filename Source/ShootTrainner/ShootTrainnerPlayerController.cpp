@@ -10,6 +10,7 @@
 
 AShootTrainnerPlayerController::AShootTrainnerPlayerController(const FObjectInitializer& ObjectInitializer)
 {
+	
 }
 
 void AShootTrainnerPlayerController::BeginPlay()
@@ -20,9 +21,10 @@ void AShootTrainnerPlayerController::BeginPlay()
 void AShootTrainnerPlayerController::ShowPauseMenu(const bool& switcher)
 {
 	if (!PauseMenuWidget) UE_LOG(LogTemp, Error, TEXT("Error , Widget  is nullptr"));
-	auto const MenuWidget = CreateWidget<UUserWidget>(this, PauseMenuWidget);
-	if (MenuWidget)
+	if (MenuWidget==nullptr)
 	{
+		MenuWidget = CreateWidget<UUserWidget>(this, PauseMenuWidget);
+	}
 		if (switcher)
 		{
 			MenuWidget->AddToViewport();
@@ -31,8 +33,5 @@ void AShootTrainnerPlayerController::ShowPauseMenu(const bool& switcher)
 		if (!switcher)
 		{
 			MenuWidget->RemoveFromParent();
-		
 		}
-		
-	}
 }

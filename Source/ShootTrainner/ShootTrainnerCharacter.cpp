@@ -139,9 +139,8 @@ void AShootTrainnerCharacter::AttachPistol(AWeapon* Pistol)
 {
 	if (Pistol)
 	{
-		//pistol->AttachToComponent(this->SkeletalMeshComponent, FAttachmentTransformRules::KeepRelativeTransform,TEXT("Weapon"));
-		Pistol->K2_AttachToComponent(this->SkeletalMeshComponent, TEXT("Weapon"), EAttachmentRule::SnapToTarget,
-		                             EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, true);
+		Pistol->AttachToComponent(this->SkeletalMeshComponent, FAttachmentTransformRules::KeepRelativeTransform,TEXT("Weapon"));
+		//Pistol->K2_AttachToComponent(this->SkeletalMeshComponent, TEXT("Weapon"), EAttachmentRule::SnapToTarget,  EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, true);
 		SetCurrentWeaponState(EWeaponState::Armed);
 	}
 }

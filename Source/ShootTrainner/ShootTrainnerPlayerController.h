@@ -20,6 +20,7 @@ public:
 	virtual void BeginPlay() override;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
 	TSubclassOf<UUserWidget> PauseMenuWidget;
+	UUserWidget* MenuWidget;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
 	ACharacter* PlayerCharacter;
 	UFUNCTION(BlueprintCallable, Category = "UI")
