@@ -127,7 +127,7 @@ EPlayerState AShootTrainnerCharacter::GetCurrentPlayingState() const
 	return CurrentPlayingState;
 }
 
-void AShootTrainnerCharacter::PickUpItem(const FInputActionValue& Value)
+void AShootTrainnerCharacter::PickUpPistol(const FInputActionValue& Value)
 {
 	if (const auto bIsArmed = Value.Get<bool>())
 	{
@@ -139,8 +139,8 @@ void AShootTrainnerCharacter::AttachPistol(AWeapon* Pistol)
 {
 	if (Pistol)
 	{
-		Pistol->AttachToComponent(this->SkeletalMeshComponent, FAttachmentTransformRules::KeepRelativeTransform,TEXT("Weapon"));
-		//Pistol->K2_AttachToComponent(this->SkeletalMeshComponent, TEXT("Weapon"), EAttachmentRule::SnapToTarget,  EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, true);
+		//Pistol->AttachToComponent(this->SkeletalMeshComponent, FAttachmentTransformRules::KeepRelativeTransform,TEXT("Weapon"));
+		Pistol->K2_AttachToComponent(this->SkeletalMeshComponent, TEXT("Weapon"), EAttachmentRule::SnapToTarget,  EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, true);
 		SetCurrentWeaponState(EWeaponState::Armed);
 	}
 }
@@ -206,8 +206,8 @@ void AShootTrainnerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerI
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AShootTrainnerCharacter::Move);
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AShootTrainnerCharacter::Look);
-		EnhancedInputComponent->BindAction(Interact, ETriggerEvent::Started, this,  &AShootTrainnerCharacter::PickUpItem);
-		EnhancedInputComponent->BindAction(DropAction, ETriggerEvent::Started, this,&AShootTrainnerCharacter::DropWeapon);
+		EnhancedInputComponent->BindAction(Interact, ETriggerEvent::Started, this,  &AShootTrainnerCharacter::PickUpPistol);
+		//EnhancedInputComponent->BindAction(DropAction, ETriggerEvent::Started, this,&AShootTrainnerCharacter::DropWeapon);
 		EnhancedInputComponent->BindAction(PlayAction, ETriggerEvent::Started, this,&AShootTrainnerCharacter::PlayChallenge);
 		EnhancedInputComponent->BindAction(ExitAction, ETriggerEvent::Completed, this, &AShootTrainnerCharacter::PlayChallenge);
 		EnhancedInputComponent->BindAction(PauseAction, ETriggerEvent::Started, this, &AShootTrainnerCharacter::PauseGame);
