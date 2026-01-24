@@ -145,7 +145,7 @@ protected:
 	/** Handles movement input. */
 	void Move(const FInputActionValue& Value);
 	/** Handles item pickup input. */
-	void PickUpItem(const FInputActionValue& Value);
+	void PickUpPistol(const FInputActionValue& Value);
 	/** Handles looking input (camera rotation). */
 	void Look(const FInputActionValue& Value);
 	/** Handles EPlayerState switching and challenge playing*/
