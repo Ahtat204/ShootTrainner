@@ -127,9 +127,9 @@ struct FChallenge
 	FString DifficultyName;
 	/**
 	 * 
-	 * @param distance 
+	 * @param distance distance from the target
 	 * @return 
 	 */
-	float EvaluatePerChallengeAccuracy(float distance) const;
+	float EvaluatePerChallengeScore(float distance) const;
 	// TODO: Add future properties like accuracy tracking or score decay over time.
 };

@@ -5,8 +5,8 @@
 AShootTrainnerGameState::AShootTrainnerGameState(const FObjectInitializer& ObjectInitializer)
 {
 }
-
-float FChallenge::EvaluatePerChallengeAccuracy(float distance) const
+// @TODO:this to be refactored to calculate score multiplier(to make it more playable ,shot fired from 32m is not like a shot fired from 17m ) instead of accuracy (accuracy is realistic mathematical value, independent of circumstances )  
+float FChallenge::EvaluatePerChallengeScore(float distance) const
 {
 	auto BaseAccuracy = FMath::Exp(-distance / 50);
 	auto GetDifficultyFactor = [](EDifficultyLevel Difficulty) -> float

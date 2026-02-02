@@ -33,6 +33,7 @@ enum class EOverlappingState : uint8
 	/** Overlap has just ended. */
 	Ended UMETA(DisplayName = "Ended"),
 };
+
 /**
  * AShootTrainerPlayerState
  * 
@@ -44,13 +45,13 @@ UCLASS()
 class SHOOTTRAINNER_API AShootTrainerPlayerState : public APlayerState
 {
 public:
-	[[nodiscard]] FORCEINLINE  float GetAccuracy() const{return Accuracy;};
+	[[nodiscard]] FORCEINLINE float GetAccuracy() const { return Accuracy; };
 	void SetAccuracy(const float Accuracy);
-	[[nodiscard]] FORCEINLINE  uint8 GetShotsFiredCount() const{return ShotsFiredCount;};
+	[[nodiscard]] FORCEINLINE uint8 GetShotsFiredCount() const { return ShotsFiredCount; };
 	void SetShotsFiredCount(const uint8 ShotsFiredCount);
-	[[nodiscard]] FORCEINLINE  uint8 GetTargetHit() const{return TargetHit;};
+	[[nodiscard]] FORCEINLINE uint8 GetTargetHit() const { return TargetHit; };
 	void SetTargetHit(const uint8 TargetHit);
-	[[nodiscard]] FORCEINLINE  float GetTimePlayed() const {return TimePlayed;};
+	[[nodiscard]] FORCEINLINE float GetTimePlayed() const { return TimePlayed; };
 	void SetTimePlayed(const float TimePlayed);
 
 private:
@@ -61,10 +62,9 @@ public:
 	explicit AShootTrainerPlayerState(const FObjectInitializer& ObjectInitializer);
 
 private:
-	
 	/**
 	 * The player’s shooting accuracy.
-	 * Calculated as Hits / ShotsFired, stored as a float (0.0 to 100.0 for percentage representation).
+	 * Calculated as Hits / ShotsFired, stored as a float (start with 1 as 100%, decays with miss count miss distance).
 	 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Stats, meta = (AllowPrivateAccess = "true"))
 	float Accuracy;
@@ -92,15 +92,24 @@ private:
 
 	/**
 	 * 
-	 * @param distance 
+	 * @param Accuracies the accuracy from each challenge played
+	 * @returns the Average Accuracy 
 	 */
 	void EvaluateAccuracy(TArray<float> Accuracies)
 	{
-		for (auto acc : Accuracies)
+		for (const auto acc : Accuracies)
 		{
-			Accuracy += acc/Accuracies.Num();
+			Accuracy += acc / Accuracies.Num();
 		}
 	};
+
+	/**
+	 * 
+	 * @param distance euclidean distance between center of the target and the hit point(where the bullet hit).
+	 * To avoid unpredictable behaviour (like negative accuracy) will count accuracy for bullets that hit target)
+	 */
+	float SetAccuracyPerCent(float distance) const
+	{
+		return FMath::Clamp(Accuracy - distance, 0, 1);
+	}
 };
-
-

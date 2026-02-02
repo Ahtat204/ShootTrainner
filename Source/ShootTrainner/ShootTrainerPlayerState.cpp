@@ -22,9 +22,10 @@ void AShootTrainerPlayerState::SetTimePlayed(const float timePlayed)
 }
 AShootTrainerPlayerState::AShootTrainerPlayerState(const FObjectInitializer& ObjectInitializer)
 {
-	Accuracy = 0.0f;
+	Accuracy = 1.0f; // if player hits all center , accuracy should be 100% not O% or making accuracy depends on shots count(this way accuracy will depend on the target ,but accuracy is mathematically calculated , ex:here is propositional to distance  )
 	ShotsFiredCount = 0;
 	TargetHit = 0;
 }
+
 
 
