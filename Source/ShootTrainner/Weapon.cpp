@@ -99,8 +99,8 @@ ABullet::ABullet(const FObjectInitializer& FObjectInitializer)
 	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>("ProjectileMovementComponent");
 	if (ProjectileMovementComponent)
 	{
-		ProjectileMovementComponent->InitialSpeed = 200.f;
-		ProjectileMovementComponent->MaxSpeed = 300.f;
+		ProjectileMovementComponent->InitialSpeed = 10000.f;
+		ProjectileMovementComponent->MaxSpeed = 0.0f;
 		ProjectileMovementComponent->bRotationFollowsVelocity = false;
 		ProjectileMovementComponent->bShouldBounce = true;
 		ProjectileMovementComponent->ProjectileGravityScale = 0.f;
@@ -109,5 +109,5 @@ ABullet::ABullet(const FObjectInitializer& FObjectInitializer)
 	CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>("CollisionCapsule");
 	CapsuleComponent->SetupAttachment(RootComponent);
 	CapsuleComponent->SetCapsuleHalfHeight(81.08f);
-	CapsuleComponent->SetCapsuleRadius(23.944208f);
+	CapsuleComponent->SetCapsuleRadius(30.944208f);
 }

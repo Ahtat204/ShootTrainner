@@ -27,5 +27,11 @@ AShootTrainerPlayerState::AShootTrainerPlayerState(const FObjectInitializer& Obj
 	TargetHit = 0;
 }
 
+void AShootTrainerPlayerState::BeginPlay()
+{
+	Super::BeginPlay();
+	
+}
+
 
 

@@ -86,7 +86,7 @@ public:
      * * Used directly for scoring or determining shot accuracy.
      */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Geometry", meta = (AllowPrivateAccess = "true"))
-    float distance;
+    double distance;
     
     /**
      * @brief A utility Scene Component used to define the origin or center of the target geometry.
