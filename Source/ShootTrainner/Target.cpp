@@ -3,6 +3,8 @@
 
 #include "Target.h"
 
+#include "ShootTrainnerPlayerController.h"
+#include "VectorTypes.h"
 #include "Weapon.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -15,6 +17,7 @@ ATarget::ATarget(const FObjectInitializer& ObjectInitializer)
 	RootComponent = StaticMeshComponent;
 	CenterComponent = CreateDefaultSubobject<USceneComponent>(TEXT("TargetCenter"));
 	CenterComponent->SetupAttachment(RootComponent);
+	distance={0};
 	
 }
 
@@ -43,11 +46,12 @@ void ATarget::OnComponentHit(UPrimitiveComponent* HitComp, AActor* OtherActor, U
 	FVector NormalImpulse, const FHitResult& Hit)
 {
 	if (!OtherActor ||OtherActor==this) return;
-	if (const auto* hitactor=Cast<ABullet>(OtherActor)  )
+	if ( auto* hitactor=Cast<ABullet>(OtherActor)  )
 	{
-		UGameplayStatics::ApplyDamage(this, 20.0f, nullptr, OtherActor, UDamageType::StaticClass());
-		Impact=Hit.ImpactPoint;
-		distance=FVector::Dist(Impact,Center);
+		//const auto InstigatorController =hitactor->GetOwner()->GetInstigatorController();
+		UGameplayStatics::ApplyDamage(this, 20.0f,nullptr, hitactor, UDamageType::StaticClass());
+		Impact=(hitactor->GetActorLocation());
+		distance= UE::Geometry::Distance(Impact,Center);
 		onTakeDamage();
 	}
 }

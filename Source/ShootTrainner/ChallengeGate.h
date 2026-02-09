@@ -15,6 +15,7 @@
 #include "GameFramework/Actor.h"
 #include "ChallengeGate.generated.h"
 
+class ATarget;
 // Forward declaration of the struct to minimize dependencies
 struct FChallenge; 
 // Forward declaration of the enum for difficulty settings
@@ -90,12 +91,18 @@ public:
     virtual void NotifyActorEndOverlap(AActor* OtherActor) override;
 
 protected:
-    /** * @brief Called when the game starts or when spawned.
-     * * Used for initial setup, component attachment, and binding any necessary events.
+    /** @brief Called when the game starts or when spawned.
+     * Used for initial setup, component attachment, and binding any necessary events.
      */
     virtual void BeginPlay() override;
 
-public: 
+public:
+    /**
+     * only one Target per challenge , so bullet that hits irrelevant challenge doesn't count
+     */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Challenge Gate|Settings", 
+       meta = (AllowPrivateAccess = "true"))
+    ATarget* ChallengeTarget;
     /**
      * @brief Called every frame.
      * * @param DeltaTime The time since the last tick.

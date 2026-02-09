@@ -95,21 +95,22 @@ private:
 	 * @param Accuracies the accuracy from each challenge played
 	 * @returns the Average Accuracy 
 	 */
-	void EvaluateAccuracy(TArray<float> Accuracies)
+	void EvaluateAverageAccuracy(TArray<float> Accuracies)
 	{
 		for (const auto acc : Accuracies)
 		{
 			Accuracy += acc / Accuracies.Num();
 		}
 	};
-
+      virtual void BeginPlay() override;
 	/**
 	 * 
-	 * @param distance euclidean distance between center of the target and the hit point(where the bullet hit).
+	 * @param distance Euclidean distance between center of the target and the hit point(where the bullet hit).
 	 * To avoid unpredictable behaviour (like negative accuracy) will count accuracy for bullets that hit target)
 	 */
-	float SetAccuracyPerCent(float distance) const
+	float SetAccuracyPerCent(float distance) 
 	{
-		return FMath::Clamp(Accuracy - distance, 0, 1);
+		Accuracy = Accuracy - distance;
+		return FMath::Clamp(Accuracy, 0, 1);
 	}
 };
