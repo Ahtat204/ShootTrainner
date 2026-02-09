@@ -108,9 +108,5 @@ private:
 	 * @param distance Euclidean distance between center of the target and the hit point(where the bullet hit).
 	 * To avoid unpredictable behaviour (like negative accuracy) will count accuracy for bullets that hit target)
 	 */
-	float SetAccuracyPerCent(float distance) 
-	{
-		Accuracy = Accuracy - distance;
-		return FMath::Clamp(Accuracy, 0, 1);
-	}
+	
 };

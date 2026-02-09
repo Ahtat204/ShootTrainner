@@ -58,6 +58,7 @@ public:
 protected:
 	virtual void NativeConstruct() override;
 	void SetTime();
+	float SetAccuracyPerCent(float distance);
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 #pragma endregion
 };

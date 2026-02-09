@@ -8,11 +8,7 @@
 #include "PacketHandlers/StatelessConnectHandlerComponent.h"
 #include "ShootTrainnerGameState.generated.h"
 
-/**
- * Forward declaration of the challenge struct.
- * Used to avoid circular dependencies.
- */
-struct FChallenge;
+
 
 /**
  * @class AShootTrainnerGameState

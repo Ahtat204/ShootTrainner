@@ -32,9 +32,17 @@ void UShootTrainnerPlayerWidget::SetTime()
 		Challenge.TimeLimit--;
 	}
 }
-
+//this is not an efficient way to do it , as this function gets called frequently, like Unity's Update
 void UShootTrainnerPlayerWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
 	if (TargetHit) TargetHit->SetText(FText::AsNumber(ChallengeGate->ChallengeTarget->Hits));
+	if (Accuracy) Accuracy->SetText(FText::AsNumber(SetAccuracyPerCent(ChallengeGate->ChallengeTarget->distance)));
+}
+
+float UShootTrainnerPlayerWidget::SetAccuracyPerCent(float distance)
+ 
+{
+	auto Acc = 100 - FMath::Loge(distance);
+	return FMath::Clamp(Acc, 0, 100);
 }

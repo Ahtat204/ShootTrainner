@@ -99,8 +99,8 @@ ABullet::ABullet(const FObjectInitializer& FObjectInitializer)
 	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>("ProjectileMovementComponent");
 	if (ProjectileMovementComponent)
 	{
-		ProjectileMovementComponent->InitialSpeed = 1000.f;
-		ProjectileMovementComponent->MaxSpeed = 1000.f;
+		ProjectileMovementComponent->InitialSpeed = 10000.f;
+		ProjectileMovementComponent->MaxSpeed = 0.0f;
 		ProjectileMovementComponent->bRotationFollowsVelocity = false;
 		ProjectileMovementComponent->bShouldBounce = true;
 		ProjectileMovementComponent->ProjectileGravityScale = 0.f;
