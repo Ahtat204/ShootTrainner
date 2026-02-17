@@ -13,7 +13,7 @@ void UShootTrainnerPlayerWidget::NativeConstruct()
 	Super::NativeConstruct();
 	Challenge=ChallengeGate->Challenge;
 	GetWorld()->GetTimerManager().SetTimer(ChallengeTimer,this,&UShootTrainnerPlayerWidget::SetTime,1.0f,true);
-	if (ChallengeName) ChallengeName->SetText(FText::FromString(Challenge.Name));
+	if (ChallengeName) ChallengeName->SetText(FText::FromString("Level"));
 	if (ScoreMultiplier)ScoreMultiplier->SetText(FText::AsNumber(Challenge.ScoreMultiplier));
 	if (Time)Time->SetText(FText::AsNumber(Challenge.TimeLimit));
 	if (Difficulty)Difficulty->SetText(FText::FromString(Challenge.DifficultyName));
