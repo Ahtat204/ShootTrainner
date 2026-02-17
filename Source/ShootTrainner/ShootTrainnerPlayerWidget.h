@@ -49,8 +49,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(BindWidget, AllowPrivateAccess=true))
 	UTextBlock* TargetHit;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(BindWidget, AllowPrivateAccess=true))
-	UTextBlock* Score;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(BindWidget, AllowPrivateAccess=true))
 	UTextBlock* Accuracy;
 	
 #pragma endregion
@@ -60,5 +58,6 @@ protected:
 	void SetTime();
 	float SetAccuracyPerCent(float distance);
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+	uint32 SetScore();
 #pragma endregion
 };
