@@ -13,10 +13,11 @@ void UShootTrainnerPlayerWidget::NativeConstruct()
 	Super::NativeConstruct();
 	Challenge=ChallengeGate->Challenge;
 	GetWorld()->GetTimerManager().SetTimer(ChallengeTimer,this,&UShootTrainnerPlayerWidget::SetTime,1.0f,true);
-	if (ChallengeName) ChallengeName->SetText(FText::FromString(Challenge.Name));
+	if (ChallengeName) ChallengeName->SetText(FText::FromString("Level"));
 	if (ScoreMultiplier)ScoreMultiplier->SetText(FText::AsNumber(Challenge.ScoreMultiplier));
 	if (Time)Time->SetText(FText::AsNumber(Challenge.TimeLimit));
 	if (Difficulty)Difficulty->SetText(FText::FromString(Challenge.DifficultyName));
+	if (TargetHit) TargetHit->SetText(FText::AsNumber(ChallengeGate->ChallengeTarget->Hits)); //the reason why we do this twice (here and in NativeTick) is to correct that quick change in value,without this , the widget will show "TEXT BLOCk and quickly show the value,which is a bad UX 
 	
 }
 void UShootTrainnerPlayerWidget::SetTime()
@@ -39,6 +40,7 @@ void UShootTrainnerPlayerWidget::NativeTick(const FGeometry& MyGeometry, float I
 	if (TargetHit) TargetHit->SetText(FText::AsNumber(ChallengeGate->ChallengeTarget->Hits));
 	if (Accuracy) Accuracy->SetText(FText::AsNumber(SetAccuracyPerCent(ChallengeGate->ChallengeTarget->distance)));
 }
+
 
 float UShootTrainnerPlayerWidget::SetAccuracyPerCent(float distance)
  
