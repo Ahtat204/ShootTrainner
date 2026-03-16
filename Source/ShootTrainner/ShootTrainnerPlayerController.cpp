@@ -20,7 +20,6 @@ void AShootTrainnerPlayerController::BeginPlay()
 
 void AShootTrainnerPlayerController::ShowPauseMenu(const bool& switcher)
 {
-	if (!PauseMenuWidget) UE_LOG(LogTemp, Error, TEXT("Error , Widget  is nullptr"));
 	if (MenuWidget==nullptr)
 	{
 		MenuWidget = CreateWidget<UUserWidget>(this, PauseMenuWidget);

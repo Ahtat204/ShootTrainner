@@ -20,17 +20,6 @@ class ATarget;
 struct FChallenge; 
 // Forward declaration of the enum for difficulty settings
 enum class EDifficultyLevel : uint8;
-
-// --- Debugging and Logging Macros ---
-#if WITH_EDITOR
-    /** Logs a warning message to the Unreal Engine output log, only in the editor build. */
-    #define LOG(x) UE_LOG(LogTemp, Warning, TEXT("%s"), *FString(x))
-#else
-    /** No-op in Shipping/Final builds. */
-    #define LOG(x)
-#endif
-
-
 /**
  * @class AChallengeGate
  * @brief An actor that acts as a challenge trigger point in the game world.
