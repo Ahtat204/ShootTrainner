@@ -56,12 +56,6 @@ AWeapon::AWeapon(const FObjectInitializer& FObjectInitializer)
 void AWeapon::BeginPlay()
 {
 	Super::BeginPlay();
-#if UE_EDITOR
-	if (FireSound == nullptr)
-	{
-		UE_LOG(LogTemp, Error, TEXT("FireSound is NULL"));
-	}
-#endif
 }
 
 /**

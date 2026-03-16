@@ -23,8 +23,6 @@ void AShootTrainnerCharacter::PlayChallenge(const FInputActionValue& Value)
 	SetCurrentPlayerState(bIsPlaying ? EPlayerState::Challenge : EPlayerState::FreeRoam);
 	SwitchIMC();
 	auto EnumString = UEnum::GetValueAsString(CurrentPlayingState);
-	LOG("overlapping state is set to Started")
-	LOG(EnumString)
 }
 
 void AShootTrainnerCharacter::SwitchIMC()
@@ -73,9 +71,6 @@ void AShootTrainnerCharacter::SetCurrentWeaponState(const EWeaponState EWeaponSt
 	if (CurrentWeaponState != EWeaponState)
 	{
 		CurrentWeaponState = EWeaponState;
-#if UE_EDITOR
-		UE_LOG(LogTemp, Warning, TEXT("Weapon state set to: %d"), static_cast<uint8>(CurrentWeaponState));
-#endif
 	}
 }
 
@@ -139,7 +134,6 @@ void AShootTrainnerCharacter::AttachPistol(AWeapon* Pistol)
 {
 	if (Pistol)
 	{
-		//Pistol->AttachToComponent(this->SkeletalMeshComponent, FAttachmentTransformRules::KeepRelativeTransform,TEXT("Weapon"));
 		Pistol->K2_AttachToComponent(this->SkeletalMeshComponent, TEXT("Weapon"), EAttachmentRule::SnapToTarget,  EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, true);
 		SetCurrentWeaponState(EWeaponState::Armed);
 	}
@@ -156,7 +150,6 @@ void AShootTrainnerCharacter::Shoot(const FInputActionValue& Value)
 
 		if (CurrentWeaponState == EWeaponState::Firing)
 		{
-			UE_LOG(LogTemp, Display, TEXT("Shooting"))
 			pickUpPistol->FireBullet();
 		}
 	}
